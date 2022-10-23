@@ -6,8 +6,7 @@
 		name = "dbquaest";
 		src = ./src;
 		propagatedBuildInputs = with my-python; [
-			setuptools
-			scipy
+			numpy
 			jupyterlab
 			];
 	}
