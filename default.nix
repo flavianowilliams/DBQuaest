@@ -8,5 +8,6 @@
 		propagatedBuildInputs = with my-python; [
 			numpy
 			jupyterlab
+			scipy
 			];
 	}
