@@ -25,11 +25,11 @@ def question(opt):
 
     elif opt == 'MWE002':
 
-        p1 = [1.0, 10.0] # min, max
+        p1 = [-10, 10.0] # min, max
         value_1 = p1[0]+(p1[1]-p1[0])*random()
         result = value_1
 
-        text = ('{:7.2f}'.format(value_1))
+        text = ('Durante sua trajetória uma partícula realizou um trabalho de {:7.2f}. Qual foi a variação da sua energia cinética?'.format(value_1))
 
         for i in range(9):
             value_1 = p1[0]+(p1[1]-p1[0])*random()

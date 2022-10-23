@@ -2,21 +2,20 @@ import os
 from . import settings
 from dbquaest.mechanics import work_and_energy as mwe
 
-class Test(mwe.Quest):
+class Test():
 
     def __init__(self, nquestion, ntest):
 
         self.nquestion = nquestion
         self.ntest = ntest
         self.question_list = list()
-        self.q_list = list()
 
     def addQuestion(self, qcode):
 
-        self.qcode = qcode
+        lista = list()
 
         for i in range(self.ntest):
-            question = mwe.question(self.qcode)
+            question = mwe.question(qcode)
             text = question['text']
             alternative = round(question['result'],2)
             value_list = [ alternative ]
@@ -28,9 +27,9 @@ class Test(mwe.Quest):
 
             value_list = [str(item) for item in value_list]
 
-            self.question_list.append({'text': text, 'alternative': value_list})
+            lista.append({'text': text, 'alternative': value_list})
 
-        self.q_list.append(self.question_list)
+        self.question_list.append(lista)
 
         return self.question_list
 
@@ -70,11 +69,11 @@ class Test(mwe.Quest):
 
                     file.write('\\begin'+'{'+'questions'+'}\n')
 
-                    for item in range(2):
+                    for j in range(2):
 
-                        file.write('\\question[25] '+self.q_list[item][i]['text']+'\n\\linebreak\linebreak\n')
+                        file.write('\\question[25] '+self.question_list[j][i]['text']+'\n\\linebreak\linebreak\n')
                         file.write('\\begin'+'{'+'oneparchoices'+'}\n')
-                        for alternative in self.q_list[item][i]['alternative']:
+                        for alternative in self.question_list[j][i]['alternative']:
                             file.write('\\choice '+alternative)
                         file.write('\\end'+'{'+'oneparchoices'+'}\n')
 
