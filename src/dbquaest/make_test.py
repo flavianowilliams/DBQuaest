@@ -85,3 +85,4 @@ class Test():
             file.close()
 
         os.system('pdflatex main.tex')
+        os.system('rm main.aux main.log')
