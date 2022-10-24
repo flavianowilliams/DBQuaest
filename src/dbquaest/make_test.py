@@ -4,11 +4,12 @@ from dbquaest.mechanics import work_and_energy as mwe
 
 class Test():
 
-    def __init__(self, nquestion, ntest):
+    def __init__(self, ntest):
 
-        self.nquestion = nquestion
+        self.nquestion = 0
         self.ntest = ntest
         self.question_list = list()
+        self.question_point = list()
 
     def addQuestion(self, point, qcode):
 
@@ -31,6 +32,10 @@ class Test():
             lista.append({'text': text, 'alternative': value_list})
 
         self.question_list.append(lista)
+
+        self.nquestion +=1
+
+        self.question_point.append(point)
 
         return self.question_list
 
@@ -71,9 +76,9 @@ class Test():
 
                     file.write('\\begin'+'{'+'questions'+'}\n')
 
-                    for j in range(2):
+                    for j in range(self.nquestion):
 
-                        file.write('\\question[25] '+self.question_list[j][i]['text']+'\n\\linebreak\linebreak\n\n')
+                        file.write('\\question['+str(self.question_point[j])+'] '+self.question_list[j][i]['text']+'\n\\linebreak\linebreak\n\n')
                         file.write('\\begin'+'{'+'oneparchoices'+'}\n')
                         for alternative in self.question_list[j][i]['alternative']:
                             file.write('\\choice '+alternative)
