@@ -10,17 +10,18 @@ class Test():
         self.ntest = ntest
         self.question_list = list()
 
-    def addQuestion(self, qcode):
+    def addQuestion(self, point, qcode):
 
         lista = list()
 
         for i in range(self.ntest):
-            question = mwe.question(qcode)
+
+            value_list = list()
+
+            question = mwe.question(point, qcode)
             text = question['text']
-            alternative = round(question['result'],2)
-            value_list = [ alternative ]
-            for alternative in question['error']:
-                alternative = round(alternative,2)
+            for alternative in question['alternative']:
+                alternative = (str(round(alternative['value'],2))+' '+alternative['unit'])
                 value_list.append(alternative)
 
             value_list.sort()
@@ -51,6 +52,7 @@ class Test():
 	Aluno: \hfill Turma: \hfill Código: XXXXX
 	\vspace{0.5cm} \hrule \vspace{0.5cm}
 \end{center}
+
         """
 
         end_template = r"""
@@ -71,7 +73,7 @@ class Test():
 
                     for j in range(2):
 
-                        file.write('\\question[25] '+self.question_list[j][i]['text']+'\n\\linebreak\linebreak\n')
+                        file.write('\\question[25] '+self.question_list[j][i]['text']+'\n\\linebreak\linebreak\n\n')
                         file.write('\\begin'+'{'+'oneparchoices'+'}\n')
                         for alternative in self.question_list[j][i]['alternative']:
                             file.write('\\choice '+alternative)
