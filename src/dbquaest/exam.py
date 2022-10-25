@@ -42,11 +42,12 @@ class Test():
     def makeExam(self):
 
         template = r"""
-\documentclass[addpoints]{exam}
+\documentclass[12pt, addpoints]{exam}
 \usepackage[utf8]{inputenc}
 \usepackage[portuguese]{babel}
 \usepackage{multicol}
 \usepackage{graphicx}
+\usepackage{amsmath}
 
 \setlength{\columnsep}{1cm}
 
@@ -55,14 +56,26 @@ class Test():
         """
 
         template_document = r"""
-\begin{center}
-	{\bf \Huge Prova bimestral}
-	\vspace{1cm} \hrule \vspace{0.5cm}
-	Aluno: \hfill Turma: \hfill Código: XXXXX
-	\vspace{0.5cm} \hrule \vspace{0.5cm}
-\end{center}
+\begin{minipage}[l]{0.5\linewidth}
+    \begin{flushleft}
+        {\bf \Large Prova bimestral}
+    \end{flushleft}
+\end{minipage}
+\begin{minipage}[r]{0.5\linewidth}
+    \begin{flushright}
+        {\bf \Large Código: XXXXX}
+    \end{flushright}
+\end{minipage}
+\vspace{1cm} \hrule \vspace{0.5cm}
+\begin{minipage}{0.70\linewidth}
+    Aluno:
+\end{minipage}
+\begin{minipage}{0.25\linewidth}
+    Turma:
+\end{minipage}
+\vspace{0.5cm} \hrule \vspace{0.5cm}
 
-        """
+"""
 
         end_template = r"""
 \end{document}
