@@ -18,18 +18,18 @@ class Test():
         for i in range(self.ntest):
 
             value_list = list()
+            resultado = list()
 
             question = mwe.question(point, qcode)
+
             text = question['text']
-            for alternative in question['alternative']:
-                alternative = (str(round(alternative['value'],2))+' '+alternative['unit'])
-                value_list.append(alternative)
+            figure = question['figure']
+            for item in question['alternative']:
+                resultado.append(item['point'])
+                value = (str(round(item['value'],2))+' '+item['unit'])
+                value_list.append(value)
 
-            value_list.sort()
-
-            value_list = [str(item) for item in value_list]
-
-            lista.append({'text': text, 'alternative': value_list})
+            lista.append({ 'code': qcode, 'test': i,'text': text, 'figure': figure, 'alternative': value_list, 'result': resultado})
 
         self.question_list.append(lista)
 
@@ -39,12 +39,16 @@ class Test():
 
         return self.question_list
 
-    def setPDF(self):
+    def makeExam(self):
 
         template = r"""
 \documentclass[addpoints]{exam}
 \usepackage[utf8]{inputenc}
 \usepackage[portuguese]{babel}
+\usepackage{multicol}
+\usepackage{graphicx}
+
+\setlength{\columnsep}{1cm}
 
 \begin{document}
 
@@ -75,21 +79,46 @@ class Test():
                 if self.question_list:
 
                     file.write('\\begin'+'{'+'questions'+'}\n')
+                    file.write('\\begin'+'{'+'multicols*'+'}'+'{'+'2'+'}''\n')
 
                     for j in range(self.nquestion):
 
-                        file.write('\\question['+str(self.question_point[j])+'] '+self.question_list[j][i]['text']+'\n\\linebreak\linebreak\n\n')
+                        file.write('\\question['+str(self.question_point[j])+'] '+self.question_list[j][i]['text']+'\n\n')
+
+                        if self.question_list[j][i]['figure']:
+                            file.write('\\begin'+'{'+'center'+'}\n')
+                            file.write('\\begin'+'{'+'minipage'+'}[c]'+'{0.75\\linewidth'+'}\n')
+                            file.write('\\includegraphics[width=\\textwidth]'+'{'+self.question_list[j][i]['figure']+'.jpg}\n')
+                            file.write('\\end'+'{'+'minipage'+'}\n\n')
+                            file.write('\\end'+'{'+'center'+'}\n')
+
                         file.write('\\begin'+'{'+'oneparchoices'+'}\n')
+
                         for alternative in self.question_list[j][i]['alternative']:
                             file.write('\\choice '+alternative)
+
                         file.write('\\end'+'{'+'oneparchoices'+'}\n')
 
-                    file.write('\\end'+'{'+'questions}\n')
+                    file.write('\\end'+'{'+'multicols*'+'}\n')
+                    file.write('\\end'+'{'+'questions'+'}\n')
 
                 file.write('\\newpage')
 
             file.write(end_template)
             file.close()
-
+      
         os.system('pdflatex main.tex')
         os.system('rm main.aux main.log')
+
+    def setCorrection(self, test, options):
+
+        self.alphabet = 'A B C D E F G H I J'.split()
+        self.feedback = list()
+
+        for i in range(self.nquestion):
+
+            indx = self.alphabet.index(options[i])
+            self.feedback.append(self.question_list[i][test]['result'][indx])
+
+#            for i in range(2):
+#                self.feedback.append(question['point'][self.alphabet.index(self.options[i])])
