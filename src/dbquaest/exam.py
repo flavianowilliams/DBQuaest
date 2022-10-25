@@ -2,16 +2,17 @@ import os
 from . import settings
 from dbquaest.mechanics import work_and_energy as mwe
 
-class Test():
+class test():
 
-    def __init__(self, ntest):
+    def __init__(self, ntest, date):
 
         self.nquestion = 0
         self.ntest = ntest
+        self.date = date
         self.question_list = list()
         self.question_point = list()
 
-    def addQuestion(self, point, qcode):
+    def add_question(self, point, qcode):
 
         lista = list()
 
@@ -39,7 +40,7 @@ class Test():
 
         return self.question_list
 
-    def makeExam(self):
+    def make_exam(self):
 
         template = r"""
 \documentclass[12pt, addpoints]{exam}
@@ -61,17 +62,17 @@ class Test():
         {\bf \Large Prova bimestral}
     \end{flushleft}
 \end{minipage}
-\begin{minipage}[r]{0.5\linewidth}
+\begin{minipage}[r]{0.45\linewidth}
     \begin{flushright}
         {\bf \Large Código: XXXXX}
     \end{flushright}
 \end{minipage}
-\vspace{1cm} \hrule \vspace{0.5cm}
-\begin{minipage}{0.70\linewidth}
+\vspace{0.5cm} \hrule \vspace{0.5cm}
+\begin{minipage}{0.75\linewidth}
     Aluno:
 \end{minipage}
-\begin{minipage}{0.25\linewidth}
-    Turma:
+\begin{minipage}{0.20\linewidth}
+    Data: 
 \end{minipage}
 \vspace{0.5cm} \hrule \vspace{0.5cm}
 
@@ -91,14 +92,15 @@ class Test():
 
                 if self.question_list:
 
-                    file.write('\\begin'+'{'+'questions'+'}\n')
-                    file.write('\\begin'+'{'+'multicols*'+'}'+'{'+'2'+'}''\n')
+                    file.write(r'\begin{questions}'+'\n')
+                    file.write(r'\begin{multicols*}{2}'+'\n')
 
                     for j in range(self.nquestion):
 
-                        file.write('\\question['+str(self.question_point[j])+'] '+self.question_list[j][i]['text']+'\n\n')
+                        file.write(r'\question['+str(self.question_point[j])+'] '+self.question_list[j][i]['text']+'\n\n')
 
                         if self.question_list[j][i]['figure']:
+                            os.system(f"cp $(pwd)/img/{self.question_list[j][i]['figure']}.jpg .")
                             file.write('\\begin'+'{'+'center'+'}\n')
                             file.write('\\begin'+'{'+'minipage'+'}[c]'+'{0.75\\linewidth'+'}\n')
                             file.write('\\includegraphics[width=\\textwidth]'+'{'+self.question_list[j][i]['figure']+'.jpg}\n')
@@ -123,7 +125,7 @@ class Test():
         os.system('pdflatex main.tex')
         os.system('rm main.aux main.log')
 
-    def setCorrection(self, test, options):
+    def set_correction(self, test, options):
 
         self.alphabet = 'A B C D E F G H I J'.split()
         self.feedback = list()
