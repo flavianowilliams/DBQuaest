@@ -49,6 +49,7 @@ class test():
 \usepackage{multicol}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage[a4paper, portrait, margin=2cm]{geometry}
 
 \setlength{\columnsep}{1cm}
 
@@ -93,7 +94,7 @@ class test():
                 if self.question_list:
 
                     file.write(r'\begin{questions}'+'\n')
-                    file.write(r'\begin{multicols*}{2}'+'\n')
+                    file.write(r'\begin{multicols}{2}'+'\n')
 
                     for j in range(self.nquestion):
 
@@ -114,7 +115,7 @@ class test():
 
                         file.write('\\end'+'{'+'oneparchoices'+'}\n')
 
-                    file.write('\\end'+'{'+'multicols*'+'}\n')
+                    file.write('\\end'+'{'+'multicols'+'}\n')
                     file.write('\\end'+'{'+'questions'+'}\n')
 
                 file.write('\\newpage')
@@ -124,6 +125,102 @@ class test():
       
         os.system('pdflatex main.tex')
         os.system('rm main.aux main.log')
+
+    def make_result(self):
+
+        template = r"""
+\documentclass[12pt, addpoints]{exam}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[a4paper, portrait, margin=2cm]{geometry}
+
+\setlength{\columnsep}{1cm}
+
+\begin{document}
+
+        """
+
+        template_document = r"""
+\begin{minipage}[l]{0.5\linewidth}
+    \begin{flushleft}
+        {\bf \Large Prova bimestral}
+    \end{flushleft}
+\end{minipage}
+\begin{minipage}[r]{0.45\linewidth}
+    \begin{flushright}
+        {\bf \Large Código: XXXXX}
+    \end{flushright}
+\end{minipage}
+\vspace{0.5cm} \hrule \vspace{0.5cm}
+\begin{minipage}{0.75\linewidth}
+    Aluno:
+\end{minipage}
+\begin{minipage}{0.20\linewidth}
+    Data: 
+\end{minipage}
+\vspace{0.5cm} \hrule \vspace{0.5cm}
+\begin{center}
+    \textcolor{red}{\large Versão de correção}
+\end{center}
+
+"""
+
+        end_template = r"""
+\end{document}
+        """
+
+        with open('main_result.tex', 'w') as file:
+
+            file.write(template)
+
+            for i in range(self.ntest):
+
+                file.write(template_document)
+
+                if self.question_list:
+
+                    file.write(r'\begin{questions}'+'\n')
+                    file.write(r'\begin{multicols}{2}'+'\n')
+
+                    for j in range(self.nquestion):
+
+                        file.write(r'\question['+str(self.question_point[j])+'] '+self.question_list[j][i]['text']+'\n\n')
+
+                        if self.question_list[j][i]['figure']:
+                            os.system(f"cp $(pwd)/img/{self.question_list[j][i]['figure']}.jpg .")
+                            file.write('\\begin'+'{'+'center'+'}\n')
+                            file.write('\\begin'+'{'+'minipage'+'}[c]'+'{0.75\\linewidth'+'}\n')
+                            file.write('\\includegraphics[width=\\textwidth]'+'{'+self.question_list[j][i]['figure']+'.jpg}\n')
+                            file.write('\\end'+'{'+'minipage'+'}\n\n')
+                            file.write('\\end'+'{'+'center'+'}\n')
+
+                        file.write('\\begin'+'{'+'oneparchoices'+'}\n')
+
+                        for alternative in self.question_list[j][i]['alternative']:
+                            file.write('\\choice '+alternative)
+
+                        file.write('\\end'+'{'+'oneparchoices'+'}\n\n')
+                        file.write('\\begin'+'{'+'oneparchoices'+'}\n')
+
+                        for alternative in self.question_list[j][i]['result']:
+                            file.write('\\choice '+str(alternative))
+
+                        file.write('\\end'+'{'+'oneparchoices'+'}\n')
+
+                    file.write('\\end'+'{'+'multicols'+'}\n')
+                    file.write('\\end'+'{'+'questions'+'}\n')
+
+                file.write('\\newpage')
+
+            file.write(end_template)
+            file.close()
+      
+        os.system('pdflatex main_result.tex')
+        os.system('rm main_result.aux main_result.log')
 
     def set_correction(self, test, options):
 
