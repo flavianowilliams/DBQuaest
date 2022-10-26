@@ -1,6 +1,6 @@
 import os
 from dbquaest.settings import BASE_DIR
-from dbquaest.mechanics import work_and_energy as mwe
+from dbquaest.electromagnetism import magnetism, electrodynamics
 
 class test():
 
@@ -50,6 +50,12 @@ class test():
             Data: {self.date}
         \\end{{minipage}}
         \\vspace{{0.5cm}} \\hrule \\vspace{{0.5cm}}
+        \\begin{{center}}
+            \\hqword{{Question:}}
+            \\hsword{{Answer:}}
+            \\cellwidth{{2.2em}}
+            \\gradetable[h][questions]
+        \\end{{center}}
 
         """
         return template
@@ -63,16 +69,43 @@ class test():
             value_list = list()
             resultado = list()
 
-            question = mwe.question(point, qcode)
-
+            question = electrodynamics.question(point, qcode)
+        
             text = question['text']
             figure = question['figure']
             for item in question['alternative']:
                 resultado.append(item['point'])
-                value = (str(round(item['value'],2))+' '+item['unit'])
+                value = (str(round(item['choice'],2))+' '+item['unit'])
                 value_list.append(value)
 
-            lista.append({ 'code': qcode, 'test': i,'text': text, 'figure': figure, 'alternative': value_list, 'result': resultado})
+            lista.append({ 'code': qcode, 'test': i, 'type': 'objective', 'text': text, 'figure': figure, 'alternative': value_list, 'result': resultado})
+
+            self.question_list.append(lista)
+
+            self.nquestion +=1
+
+            self.question_point.append(point)
+
+        return self.question_list
+
+    def add_c_question(self, point, qcode):
+
+        lista = list()
+
+        for i in range(self.ntest):
+
+            choice_list = list()
+            resultado = list()
+
+            question = magnetism.c_question(point, qcode)
+        
+            text = question['text']
+            figure = question['figure']
+            for item in question['alternative']:
+                resultado.append(item['point'])
+                choice_list.append(item['choice'])
+
+            lista.append({ 'code': qcode, 'test': i, 'type': 'conceptual', 'text': text, 'figure': figure, 'alternative': choice_list, 'result': resultado})
 
         self.question_list.append(lista)
 
@@ -101,22 +134,33 @@ class test():
 
                     for j in range(self.nquestion):
 
-                        file.writelines(r'\question['+str(self.question_point[j])+r'] '+self.question_list[j][i]['text']+'\n')
+                        file.writelines(r'\question['+str(self.question_point[j])+r'] '+self.question_list[j][i]['text']+'\n\n')
 
                         if self.question_list[j][i]['figure']:
-                            os.system(f"cp {BASE_DIR}/src/dbquaest/mechanics/img/{self.question_list[j][i]['figure']}.jpg .")
+                            os.system(f"cp {BASE_DIR}/src/dbquaest/img/{self.question_list[j][i]['figure']}.jpg .")
                             file.write(r'\begin{center}'+'\n')
                             file.write(r'\begin{minipage}[c]{0.75\linewidth}'+'\n')
                             file.write(r'\includegraphics[width=\textwidth]'+'{'+self.question_list[j][i]['figure']+'.jpg}\n')
                             file.write(r'\end{minipage}'+'\n')
                             file.write(r'\end{center}'+'\n')
 
-                        file.write(r'\begin{oneparchoices}'+'\n')
+                        if self.question_list[j][i]['type'] == 'objective':
 
-                        for alternative in self.question_list[j][i]['alternative']:
-                            file.write(r'\choice '+alternative)
+                            file.write(r'\begin{oneparchoices}'+'\n')
 
-                        file.write(r'\end{oneparchoices}'+'\n')
+                            for alternative in self.question_list[j][i]['alternative']:
+                                file.write(r'\choice '+alternative)
+
+                            file.write(r'\end{oneparchoices}'+'\n')
+
+                        else:
+
+                            file.write(r'\begin{choices}'+'\n')
+
+                            for alternative in self.question_list[j][i]['alternative']:
+                                file.write(r'\choice '+alternative)
+
+                            file.write(r'\end{choices}'+'\n')
 
                     file.write(r'\end{multicols*}'+'\n')
                     file.write(r'\end{questions}'+'\n')
@@ -127,9 +171,10 @@ class test():
             file.close()
       
         os.system('pdflatex main.tex')
+        os.system('pdflatex main.tex')
         os.system('rm main.aux main.log')
 
-    def make_result(self):
+    def make_correction(self):
 
         with open('main_result.tex', 'w') as file:
 
@@ -153,7 +198,7 @@ class test():
                         file.writelines(r'\question['+str(self.question_point[j])+r'] '+self.question_list[j][i]['text']+'\n\n')
 
                         if self.question_list[j][i]['figure']:
-                            os.system(f"cp {BASE_DIR}/src/dbquaest/mechanics/img/{self.question_list[j][i]['figure']}.jpg .")
+                            os.system(f"cp {BASE_DIR}/src/dbquaest/img/{self.question_list[j][i]['figure']}.jpg .")
                             file.write(r'\begin{center}'+'\n')
                             file.write(r'\begin{minipage}[c]{0.75\linewidth}'+'\n')
                             file.write(r'\includegraphics[width=\textwidth]'+'{'+self.question_list[j][i]['figure']+'.jpg}\n')
@@ -162,14 +207,8 @@ class test():
 
                         file.write(r'\begin{oneparchoices}'+'\n')
 
-                        for alternative in self.question_list[j][i]['alternative']:
-                            file.write('\\choice '+alternative)
-
-                        file.write(r'\end{oneparchoices}'+'\n\n')
-                        file.write(r'\begin{oneparchoices}'+'\n')
-
                         for alternative in self.question_list[j][i]['result']:
-                            file.write('\\choice '+str(alternative))
+                            file.write(r'\choice '+str(alternative))
 
                         file.write(r'\end{oneparchoices}'+'\n')
 
@@ -181,6 +220,7 @@ class test():
             file.write(r'\end{document}')
             file.close()
       
+        os.system('pdflatex main_result.tex')
         os.system('pdflatex main_result.tex')
         os.system('rm main_result.aux main_result.log')
 
