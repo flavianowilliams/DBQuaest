@@ -95,27 +95,27 @@ class test():
 
                     for j in range(self.nquestion):
 
-                        file.write(r'\question['+str(self.question_point[j])+'] '+self.question_list[j][i]['text']+'\n')
+                        file.writelines(r'\question['+str(self.question_point[j])+r'] '+self.question_list[j][i]['text']+'\n')
 
                         if self.question_list[j][i]['figure']:
                             os.system(f"cp {BASE_DIR}/src/dbquaest/mechanics/img/{self.question_list[j][i]['figure']}.jpg .")
-                            file.write('\\begin'+'{'+'center'+'}\n')
-                            file.write('\\begin'+'{'+'minipage'+'}[c]'+'{0.75\\linewidth'+'}\n')
-                            file.write('\\includegraphics[width=\\textwidth]'+'{'+self.question_list[j][i]['figure']+'.jpg}\n')
-                            file.write('\\end'+'{'+'minipage'+'}\n')
-                            file.write('\\end'+'{'+'center'+'}\n')
+                            file.write(r'\begin{center}'+'\n')
+                            file.write(r'\begin{minipage}[c]{0.75\linewidth}'+'\n')
+                            file.write(r'\includegraphics[width=\textwidth]'+'{'+self.question_list[j][i]['figure']+'.jpg}\n')
+                            file.write(r'\end{minipage}'+'\n')
+                            file.write(r'\end{center}'+'\n')
 
-                        file.write('\\begin'+'{'+'oneparchoices'+'}\n')
+                        file.write(r'\begin{oneparchoices}'+'\n')
 
                         for alternative in self.question_list[j][i]['alternative']:
-                            file.write('\\choice '+alternative)
+                            file.write(r'\choice '+alternative)
 
-                        file.write('\\end'+'{'+'oneparchoices'+'}\n')
+                        file.write(r'\end{oneparchoices}'+'\n')
 
-                    file.write('\\end'+'{'+'multicols'+'}\n')
-                    file.write('\\end'+'{'+'questions'+'}\n')
+                    file.write(r'\end{multicols}'+'\n')
+                    file.write(r'\end{questions}'+'\n')
 
-                file.write('\\newpage')
+                file.write(r'\newpage')
 
             file.write(r'\end{document}')
             file.close()
@@ -144,33 +144,33 @@ class test():
 
                     for j in range(self.nquestion):
 
-                        file.write(r'\question['+str(self.question_point[j])+'] '+self.question_list[j][i]['text']+'\n\n')
+                        file.writelines(r'\question['+str(self.question_point[j])+r'] '+self.question_list[j][i]['text']+'\n\n')
 
                         if self.question_list[j][i]['figure']:
                             os.system(f"cp {BASE_DIR}/src/dbquaest/mechanics/img/{self.question_list[j][i]['figure']}.jpg .")
-                            file.write('\\begin'+'{'+'center'+'}\n')
-                            file.write('\\begin'+'{'+'minipage'+'}[c]'+'{0.75\\linewidth'+'}\n')
-                            file.write('\\includegraphics[width=\\textwidth]'+'{'+self.question_list[j][i]['figure']+'.jpg}\n')
-                            file.write('\\end'+'{'+'minipage'+'}\n\n')
-                            file.write('\\end'+'{'+'center'+'}\n')
+                            file.write(r'\begin{center}'+'\n')
+                            file.write(r'\begin{minipage}[c]{0.75\linewidth}'+'\n')
+                            file.write(r'\includegraphics[width=\textwidth]'+'{'+self.question_list[j][i]['figure']+'.jpg}\n')
+                            file.write(r'\end{minipage}'+'\n\n')
+                            file.write(r'\end{center}'+'\n')
 
-                        file.write('\\begin'+'{'+'oneparchoices'+'}\n')
+                        file.write(r'\begin{oneparchoices}'+'\n')
 
                         for alternative in self.question_list[j][i]['alternative']:
                             file.write('\\choice '+alternative)
 
-                        file.write('\\end'+'{'+'oneparchoices'+'}\n\n')
-                        file.write('\\begin'+'{'+'oneparchoices'+'}\n')
+                        file.write(r'\end{oneparchoices}'+'\n\n')
+                        file.write(r'\begin{oneparchoices}'+'\n')
 
                         for alternative in self.question_list[j][i]['result']:
                             file.write('\\choice '+str(alternative))
 
-                        file.write('\\end'+'{'+'oneparchoices'+'}\n')
+                        file.write(r'\end{oneparchoices}'+'\n')
 
-                    file.write('\\end'+'{'+'multicols'+'}\n')
-                    file.write('\\end'+'{'+'questions'+'}\n')
+                    file.write(r'\end{multicols}'+'\n')
+                    file.write(r'\end{questions}'+'\n')
 
-                file.write('\\newpage')
+                file.write(r'\newpage')
 
             file.write(r'\end{document}')
             file.close()
