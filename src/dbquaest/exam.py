@@ -4,13 +4,16 @@ from dbquaest.mechanics import work_and_energy as mwe
 
 class test():
 
-    def __init__(self, ntest, date):
+    def __init__(self, ntest, date, title):
 
         self.nquestion = 0
         self.ntest = ntest
         self.date = date
+        self.title = title
         self.question_list = list()
         self.question_point = list()
+
+        code = 1
 
         self.template = r"""
 \documentclass[12pt, addpoints]{exam}
@@ -26,27 +29,30 @@ class test():
 
         """
 
-        self.template_document = r"""
-\begin{minipage}[l]{0.5\linewidth}
-    \begin{flushleft}
-        {\bf \Large Prova bimestral}
-    \end{flushleft}
-\end{minipage}
-\begin{minipage}[r]{0.45\linewidth}
-    \begin{flushright}
-        {\bf \Large Código: XXXXX}
-    \end{flushright}
-\end{minipage}
-\vspace{0.5cm} \hrule \vspace{0.5cm}
-\begin{minipage}{0.75\linewidth}
-    Aluno:
-\end{minipage}
-\begin{minipage}{0.20\linewidth}
-    Data: 
-\end{minipage}
-\vspace{0.5cm} \hrule \vspace{0.5cm}
+    def template_document(self, code):
 
-"""
+        template = f"""
+        \\begin{{minipage}}[l]{{0.75\linewidth}}
+            \\begin{{flushleft}}
+                {{\\bf \Large {self.title}}}
+            \\end{{flushleft}}
+        \\end{{minipage}}
+        \\begin{{minipage}}[r]{{0.20\linewidth}}
+            \\begin{{flushright}}
+                {{\\bf \Large Código: {code}}}
+            \\end{{flushright}}
+        \\end{{minipage}}
+        \\vspace{{0.5cm}} \\hrule \\vspace{{0.5cm}}
+        \\begin{{minipage}}{{0.75\linewidth}}
+            Aluno:
+        \\end{{minipage}}
+        \\begin{{minipage}}{{0.20\linewidth}}
+            Data: {self.date}
+        \\end{{minipage}}
+        \\vspace{{0.5cm}} \\hrule \\vspace{{0.5cm}}
+
+        """
+        return template
 
     def add_question(self, point, qcode):
 
@@ -86,12 +92,12 @@ class test():
 
             for i in range(self.ntest):
 
-                file.write(self.template_document)
+                file.write(self.template_document(i))
 
                 if self.question_list:
 
                     file.write(r'\begin{questions}'+'\n')
-                    file.write(r'\begin{multicols}{2}'+'\n')
+                    file.write(r'\begin{multicols*}{2}'+'\n')
 
                     for j in range(self.nquestion):
 
@@ -112,7 +118,7 @@ class test():
 
                         file.write(r'\end{oneparchoices}'+'\n')
 
-                    file.write(r'\end{multicols}'+'\n')
+                    file.write(r'\end{multicols*}'+'\n')
                     file.write(r'\end{questions}'+'\n')
 
                 file.write(r'\newpage')
@@ -133,14 +139,14 @@ class test():
 
             for i in range(self.ntest):
 
-                file.write(self.template_document)
+                file.write(self.template_document(i))
 
                 file.write(r'\begin{center}'+'\n'+r'\textcolor{red}{\emph\Large Correction version}'+r'\end{center}'+'\n')
 
                 if self.question_list:
 
                     file.write(r'\begin{questions}'+'\n')
-                    file.write(r'\begin{multicols}{2}'+'\n')
+                    file.write(r'\begin{multicols*}{2}'+'\n')
 
                     for j in range(self.nquestion):
 
@@ -167,7 +173,7 @@ class test():
 
                         file.write(r'\end{oneparchoices}'+'\n')
 
-                    file.write(r'\end{multicols}'+'\n')
+                    file.write(r'\end{multicols*}'+'\n')
                     file.write(r'\end{questions}'+'\n')
 
                 file.write(r'\newpage')
