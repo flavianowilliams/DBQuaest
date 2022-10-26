@@ -1,2 +1,3 @@
-import os
-os.chdir(os.path.dirname(os.path.abspath('setup.py')))
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent

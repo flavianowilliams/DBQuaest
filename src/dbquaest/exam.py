@@ -1,5 +1,5 @@
 import os
-from . import settings
+from dbquaest.settings import BASE_DIR
 from dbquaest.mechanics import work_and_energy as mwe
 
 class test():
@@ -11,6 +11,42 @@ class test():
         self.date = date
         self.question_list = list()
         self.question_point = list()
+
+        self.template = r"""
+\documentclass[12pt, addpoints]{exam}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[a4paper, portrait, margin=2cm]{geometry}
+
+\setlength{\columnsep}{1cm}
+
+        """
+
+        self.template_document = r"""
+\begin{minipage}[l]{0.5\linewidth}
+    \begin{flushleft}
+        {\bf \Large Prova bimestral}
+    \end{flushleft}
+\end{minipage}
+\begin{minipage}[r]{0.45\linewidth}
+    \begin{flushright}
+        {\bf \Large Código: XXXXX}
+    \end{flushright}
+\end{minipage}
+\vspace{0.5cm} \hrule \vspace{0.5cm}
+\begin{minipage}{0.75\linewidth}
+    Aluno:
+\end{minipage}
+\begin{minipage}{0.20\linewidth}
+    Data: 
+\end{minipage}
+\vspace{0.5cm} \hrule \vspace{0.5cm}
+
+"""
 
     def add_question(self, point, qcode):
 
@@ -42,54 +78,15 @@ class test():
 
     def make_exam(self):
 
-        template = r"""
-\documentclass[12pt, addpoints]{exam}
-\usepackage[utf8]{inputenc}
-\usepackage[portuguese]{babel}
-\usepackage{multicol}
-\usepackage{graphicx}
-\usepackage{amsmath}
-\usepackage[a4paper, portrait, margin=2cm]{geometry}
-
-\setlength{\columnsep}{1cm}
-
-\begin{document}
-
-        """
-
-        template_document = r"""
-\begin{minipage}[l]{0.5\linewidth}
-    \begin{flushleft}
-        {\bf \Large Prova bimestral}
-    \end{flushleft}
-\end{minipage}
-\begin{minipage}[r]{0.45\linewidth}
-    \begin{flushright}
-        {\bf \Large Código: XXXXX}
-    \end{flushright}
-\end{minipage}
-\vspace{0.5cm} \hrule \vspace{0.5cm}
-\begin{minipage}{0.75\linewidth}
-    Aluno:
-\end{minipage}
-\begin{minipage}{0.20\linewidth}
-    Data: 
-\end{minipage}
-\vspace{0.5cm} \hrule \vspace{0.5cm}
-
-"""
-
-        end_template = r"""
-\end{document}
-        """
-
         with open('main.tex', 'w') as file:
 
-            file.write(template)
+            file.write(self.template)
+
+            file.write(r'\begin{document}'+'\n')
 
             for i in range(self.ntest):
 
-                file.write(template_document)
+                file.write(self.template_document)
 
                 if self.question_list:
 
@@ -98,14 +95,14 @@ class test():
 
                     for j in range(self.nquestion):
 
-                        file.write(r'\question['+str(self.question_point[j])+'] '+self.question_list[j][i]['text']+'\n\n')
+                        file.write(r'\question['+str(self.question_point[j])+'] '+self.question_list[j][i]['text']+'\n')
 
                         if self.question_list[j][i]['figure']:
-                            os.system(f"cp $(pwd)/img/{self.question_list[j][i]['figure']}.jpg .")
+                            os.system(f"cp {BASE_DIR}/src/dbquaest/mechanics/img/{self.question_list[j][i]['figure']}.jpg .")
                             file.write('\\begin'+'{'+'center'+'}\n')
                             file.write('\\begin'+'{'+'minipage'+'}[c]'+'{0.75\\linewidth'+'}\n')
                             file.write('\\includegraphics[width=\\textwidth]'+'{'+self.question_list[j][i]['figure']+'.jpg}\n')
-                            file.write('\\end'+'{'+'minipage'+'}\n\n')
+                            file.write('\\end'+'{'+'minipage'+'}\n')
                             file.write('\\end'+'{'+'center'+'}\n')
 
                         file.write('\\begin'+'{'+'oneparchoices'+'}\n')
@@ -120,7 +117,7 @@ class test():
 
                 file.write('\\newpage')
 
-            file.write(end_template)
+            file.write(r'\end{document}')
             file.close()
       
         os.system('pdflatex main.tex')
@@ -128,58 +125,17 @@ class test():
 
     def make_result(self):
 
-        template = r"""
-\documentclass[12pt, addpoints]{exam}
-\usepackage[utf8]{inputenc}
-\usepackage[portuguese]{babel}
-\usepackage{multicol}
-\usepackage{graphicx}
-\usepackage{amsmath}
-\usepackage{xcolor}
-\usepackage[a4paper, portrait, margin=2cm]{geometry}
-
-\setlength{\columnsep}{1cm}
-
-\begin{document}
-
-        """
-
-        template_document = r"""
-\begin{minipage}[l]{0.5\linewidth}
-    \begin{flushleft}
-        {\bf \Large Prova bimestral}
-    \end{flushleft}
-\end{minipage}
-\begin{minipage}[r]{0.45\linewidth}
-    \begin{flushright}
-        {\bf \Large Código: XXXXX}
-    \end{flushright}
-\end{minipage}
-\vspace{0.5cm} \hrule \vspace{0.5cm}
-\begin{minipage}{0.75\linewidth}
-    Aluno:
-\end{minipage}
-\begin{minipage}{0.20\linewidth}
-    Data: 
-\end{minipage}
-\vspace{0.5cm} \hrule \vspace{0.5cm}
-\begin{center}
-    \textcolor{red}{\large Versão de correção}
-\end{center}
-
-"""
-
-        end_template = r"""
-\end{document}
-        """
-
         with open('main_result.tex', 'w') as file:
 
-            file.write(template)
+            file.write(self.template)
+
+            file.write(r'\begin{document}'+'\n')
 
             for i in range(self.ntest):
 
-                file.write(template_document)
+                file.write(self.template_document)
+
+                file.write(r'\begin{center}'+'\n'+r'\textcolor{red}{\emph\Large Correction version}'+r'\end{center}'+'\n')
 
                 if self.question_list:
 
@@ -191,7 +147,7 @@ class test():
                         file.write(r'\question['+str(self.question_point[j])+'] '+self.question_list[j][i]['text']+'\n\n')
 
                         if self.question_list[j][i]['figure']:
-                            os.system(f"cp $(pwd)/img/{self.question_list[j][i]['figure']}.jpg .")
+                            os.system(f"cp {BASE_DIR}/src/dbquaest/mechanics/img/{self.question_list[j][i]['figure']}.jpg .")
                             file.write('\\begin'+'{'+'center'+'}\n')
                             file.write('\\begin'+'{'+'minipage'+'}[c]'+'{0.75\\linewidth'+'}\n')
                             file.write('\\includegraphics[width=\\textwidth]'+'{'+self.question_list[j][i]['figure']+'.jpg}\n')
@@ -216,7 +172,7 @@ class test():
 
                 file.write('\\newpage')
 
-            file.write(end_template)
+            file.write(r'\end{document}')
             file.close()
       
         os.system('pdflatex main_result.tex')

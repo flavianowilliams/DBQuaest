@@ -13,9 +13,9 @@ def question(qpoint, opt):
         value_2 = p2[0]+(p2[1]-p2[0])*random.random()
         alt_list = [{'value': 0.5*value_1*value_2**2, 'unit': 'J', 'point': qpoint}]
 
-        text = (
-            'Considere uma partícula de massa {:7.2f} {} e velocidade {:7.2f} {}. Determine a sua energia cinética.'.format(value_1, p1[2], value_2, p2[2])
-            )
+        text = f"""
+            Considere uma partícula de massa {value_1:7.2f} {p1[2]} e velocidade {value_2:7.2f} {p2[2]}. Determine a sua energia cinética.
+        """
 
         figure = 'MWE001'
 
@@ -30,9 +30,9 @@ def question(qpoint, opt):
         value_1 = p1[0]+(p1[1]-p1[0])*random.random()
         alt_list = [{'value': value_1, 'unit': 'J', 'point': qpoint}]
 
-        text = (
-            'Durante sua trajetória uma partícula realizou um trabalho de {:7.2f} {}. Qual foi a variação da sua energia cinética?'.format(value_1, p1[2])
-            )
+        text = f"""
+            Durante sua trajetória uma partícula realizou um trabalho de {value_1:7.2f} {p1[2]}. Qual foi a variação da sua energia cinética?
+        """
 
         figure = ''
 
