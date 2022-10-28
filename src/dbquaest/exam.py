@@ -33,6 +33,7 @@ class test():
 
 \usetikzlibrary{arrows,3d,calc,automata,positioning,shadows,math,fit,shapes}
 \usetikzlibrary{patterns,hobby,optics,calc}
+\tikzset{>=stealth, thick, global scale/.style={scale=#1,every node/.style={scale=#1}}}
 \setlength{\columnsep}{1cm}
 \renewcommand{\choiceshook}{\setlength{\leftmargin}{0pt}}
 
