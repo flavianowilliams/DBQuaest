@@ -40,7 +40,6 @@ def question(qpoint, opt):
         
         """
 
-#        figure = 'OEELE001'
         figure = ''
 
         alt_list = [{'choice': r'$b\rightarrow a$ ou $c\rightarrow d$', 'unit': '', 'point': qpoint}]

@@ -22,7 +22,7 @@ def question(qpoint, opt):
         alt_list.append({'choice': value_1*value_2*value_3*cos(value_4*3.14/180), 'unit': ' N', 'point': 0.25*qpoint})
         alt_list.append({'choice': value_1*value_2*value_3*value_4, 'unit': ' N', 'point': 0.25*qpoint})
 
-        text = f"""Uma partícula de carga {value_1:.2e} {p1[2]} é lançada em um campo magnético uniforme de {value_2:7.2f} {p2[2]} , com uma velocidade de {value_3:5.2f} {p3[2]}. Calcule o valor da força magnética atuando na carga se o ângulo entre a velocidade e o campo magnético for {value_4:7.2f} {p4[2]}."""
+        text = f"""A função trabalho do sódio é 2,28 eV, determine a energia cinética dos elétrons que são emitidos desse material quando ele é bombardeado por radiação com comprimento de onda de {} {}."""
 
         figure = ''
 

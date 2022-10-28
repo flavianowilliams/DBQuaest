@@ -12,14 +12,14 @@ def question(qpoint, opt):
             \begin{minipage}[c]{0.5\linewidth}
                 \begin{tikzpicture}[scale=0.5,transform shape, font=\Large]
 
-                    \tkzInit[xmin=-3.5,xmax=3.5,ymin=-3.5,ymax=3.5]
+                    \tkzInit[xmin=-3,xmax=3,ymin=-3,ymax=3]
                 %	\tkzGrid[color=gray!20]
-                    \tkzClip[space=0.8]
+                    \tkzClip[space=1.0]
 
                     \tkzDefPoints{0/0/O,4/0/P}
 
-                    \foreach \x in {-3.5,-2.5,...,4}{
-                        \foreach \y in {-3.5,-2.5,...,4}{
+                    \foreach \x in {-2.5,-1.5,...,2.5}{
+                        \foreach \y in {-2.5,-1.5,...,2.5}{
                         \tkzDefPoint(\x,\y){B}
                         \tkzText(B){x}
                 }

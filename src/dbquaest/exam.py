@@ -1,5 +1,5 @@
-from genericpath import exists
 import os
+import random
 from dbquaest.settings import BASE_DIR
 from dbquaest.electromagnetism import magnetism, electrodynamics, electrostatic, induced_magnetic_field
 
@@ -70,12 +70,12 @@ class test():
 
         modules = [electrostatic, electrodynamics, magnetism, induced_magnetic_field]
 
-        for module in modules:
-            item = module.question(point, qcode)
-            if bool(item) == True:
-                quest = item
-
         for i in range(self.ntest):
+
+            for module in modules:
+                item = module.question(point, qcode)
+                if bool(item) == True:
+                    quest = item
 
             value_list = list()
             resultado = list()
@@ -136,7 +136,7 @@ class test():
                             for item in self.question_list[j][i]['alternative']:
                                 key_1 = item['choice']
                                 key_2 = item['unit']
-                                if abs(key_1) < 1.e-3 or key_1 > 1.e+3:
+                                if abs(key_1) < 1.e-2 or key_1 > 1.e+3:
                                     file.write(r'\choice '+f'{key_1:.1e}'+key_2+';')
                                 else:
                                     file.write(r'\choice '+f'{key_1:7.3f}'+key_2+';')
@@ -175,7 +175,7 @@ class test():
 
                 file.write(self.template_document(i))
 
-                file.write(r'\begin{center}'+'\n'+r'\textcolor{red}{\emph\Large Correction version}'+r'\end{center}'+'\n')
+                file.write(r'\begin{center}'+'\n'+r'\textcolor{red}{\emph\Large Correcting version}'+r'\end{center}'+'\n')
 
                 if self.question_list:
 
