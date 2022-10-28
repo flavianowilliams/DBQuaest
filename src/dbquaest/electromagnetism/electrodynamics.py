@@ -1,75 +1,60 @@
 import random
-from sys import ps2
 
 def question(qpoint, opt):
 
-#    seed(1)
-
     if opt == 'OEELD001':
+
+        type = 'objective'
 
         p1 = [1.0, 10.0, 'A'] # min, max
         value_1 = random.uniform(p1[0], p1[1])
-        alt_list = [{'choice': value_1, 'unit': '', 'point': qpoint}]
+        alt_list = [{'choice': value_1*60/1.6e-19, 'unit': '', 'point': qpoint}]
+        alt_list.append({'choice': value_1/1.6e-19, 'unit': '', 'point': 0.75*qpoint})
+        alt_list.append({'choice': value_1*60*1.6e-19, 'unit': '', 'point': 0.50*qpoint})
+        alt_list.append({'choice': value_1*1.6e-19, 'unit': '', 'point': 0.50*qpoint})
 
-        text = f"""Uma corrente elétrica de {value_1:7.2f} percorre um ﬁo de cobre. Sabendo-se que a carga de um elétron é igual a $1,6\times 10^{{-19}}\;C$, qual é o número de elétrons que atravessa, por minuto, a seção reta desse ﬁo?"""
+        text = f"""Uma corrente elétrica de {value_1:7.2f} {p1[2]} percorre um ﬁo de cobre. Sabendo-se que a carga de um elétron é igual a $1,6\\times 10^{{-19}}\;C$, qual é o número de elétrons que atravessa, por minuto, a seção reta desse ﬁo?"""
 
         figure = ''
 
-        for i in range(9):
-            value_1 = random.uniform(p1[0], p1[1])
+        for i in range(6):
+            value_1 = random.uniform(p1[0], p1[1])*1.e+19
             alt_list.append({'choice': value_1, 'unit': '', 'point': 0.0})
 
-    else:
-        
-        text = ''
+        indx = random.sample(range(0,10),10)
+
+        alternative_list = [alt_list[u] for u in indx]
+
+        context = {'type': type, 'text': text, 'figure': figure, 'alternative': alternative_list}
+
+    elif opt == 'OEELD002':
+
+        type = 'objective'
+
+        p1 = [1.0, 5.0, 'A'] # min, max
+        value_1 = random.uniform(p1[0], p1[1])
+        alt_list = [{'choice': 120*value_1, 'unit': ' W', 'point': qpoint}]
+        alt_list.append({'choice': 120*value_1**2, 'unit': ' W', 'point': 0.0})
+        alt_list.append({'choice': 120/value_1, 'unit': ' W', 'point': 0.0})
+        alt_list.append({'choice': value_1/120, 'unit': ' W', 'point': 0.0})
+
+        text = f"""Uma diferença de potencial de 120 V é aplicada a uma bomba d’água. Sabe-se que em funcionamento, o motor da bomba é percorrido por uma corrente de {value_1:7.2f} {p1[2]}. Qual é a potência desenvolvida nesse motor?"""
 
         figure = ''
 
-        alt_list = [{'choice': None, 'unit': None, 'point': None}]
+        error = [0, 36000, 'W'] # min, max
+        for i in range(6):
+            value_1 = random.uniform(error[0], error[1])
+            alt_list.append({'choice': value_1, 'unit': error[2], 'point': 0.0})
 
-    indx = random.sample(range(0,10),10)
+        indx = random.sample(range(0,10),10)
 
-    alternative_list = [alt_list[u] for u in indx]
+        alternative_list = [alt_list[u] for u in indx]
 
-#    alternative = sorted(alternative, key=lambda u: u['value'])
-
-    context = {'text': text, 'figure': figure, 'alternative': alternative_list}
-
-    return context
-
-def c_question(qpoint, opt):
-
-#    seed(1)
-
-    if opt == 'xxxxx':
-
-        text = f"""xxxx"""
-
-        figure = ''
-
-        p1 = [1.0, 10.0, 'kg'] # min, max
-        p2 = [1.0, 10.0, 'm/s'] # min, max
-
-        alt_list = [{'choice': 'Paralelo ao papel e da direita para a esquerda.', 'point': 0.0}]
-        alt_list.append({'choice': 'Paralelo ao papel e da esquerda para a direita.', 'point': 0.0})
-        alt_list.append({'choice': 'Paralelo ao papel e na vertical.', 'point': 0.0})
-        alt_list.append({'choice': 'Paralelo ao papel e circular no sentido horário.', 'point': 0.5*qpoint})
-        alt_list.append({'choice': 'Paralelo ao papel e circular no sentido anti-horário.', 'point': qpoint})
+        context = {'type': type, 'text': text, 'figure': figure, 'alternative': alternative_list}
 
     else:
-        
-        text = ''
 
-        figure = ''
-
-        alt_list = [{'choice': None, 'point': None}]
-
-    indx = random.sample(range(0,5),5)
-
-    alternative_list = [alt_list[u] for u in indx]
-
-#    alternative = sorted(alternative, key=lambda u: u['value'])
-
-    context = {'text': text, 'figure': figure, 'alternative': alternative_list}
+        context = {}
 
     return context

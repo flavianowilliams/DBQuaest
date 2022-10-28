@@ -1,15 +1,16 @@
+from genericpath import exists
 import os
 from dbquaest.settings import BASE_DIR
-from dbquaest.electromagnetism import magnetism, electrodynamics
+from dbquaest.electromagnetism import magnetism, electrodynamics, electrostatic, induced_magnetic_field
 
 class test():
 
-    def __init__(self, ntest, date, title):
+    def __init__(self, ntest, title, subtitle):
 
         self.nquestion = 0
         self.ntest = ntest
-        self.date = date
         self.title = title
+        self.subtitle = subtitle
         self.question_list = list()
         self.question_point = list()
 
@@ -23,39 +24,41 @@ class test():
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{xcolor}
+\usepackage{tikz,pgfplots,tikz-3dplot,bm}
+\usepackage{circuitikz}
+\usepackage{tkz-base}
+\usepackage{tkz-fct}
+\usepackage{tkz-euclide}
 \usepackage[a4paper, portrait, margin=2cm]{geometry}
 
+\usetikzlibrary{arrows,3d,calc,automata,positioning,shadows,math,fit,shapes}
+\usetikzlibrary{patterns,hobby,optics,calc}
 \setlength{\columnsep}{1cm}
+\renewcommand{\choiceshook}{\setlength{\leftmargin}{0pt}}
 
         """
 
     def template_document(self, code):
 
         template = f"""
-        \\begin{{minipage}}[l]{{0.75\linewidth}}
+        \\begin{{minipage}}[b]{{0.75\linewidth}}
             \\begin{{flushleft}}
-                {{\\bf \Large {self.title}}}
+                {{\\bf \large {self.title}}}
+            \\end{{flushleft}}
+            \\begin{{flushleft}}
+                {{\\bf \large {self.subtitle}}}
             \\end{{flushleft}}
         \\end{{minipage}}
-        \\begin{{minipage}}[r]{{0.20\linewidth}}
+        \\begin{{minipage}}[b]{{0.20\linewidth}}
             \\begin{{flushright}}
-                {{\\bf \Large Código: {code}}}
+                {{\\bf \large Código: {code}}}
             \\end{{flushright}}
         \\end{{minipage}}
         \\vspace{{0.5cm}} \\hrule \\vspace{{0.5cm}}
         \\begin{{minipage}}{{0.75\linewidth}}
             Aluno:
         \\end{{minipage}}
-        \\begin{{minipage}}{{0.20\linewidth}}
-            Data: {self.date}
-        \\end{{minipage}}
         \\vspace{{0.5cm}} \\hrule \\vspace{{0.5cm}}
-        \\begin{{center}}
-            \\hqword{{Question:}}
-            \\hsword{{Answer:}}
-            \\cellwidth{{2.2em}}
-            \\gradetable[h][questions]
-        \\end{{center}}
 
         """
         return template
@@ -64,54 +67,34 @@ class test():
 
         lista = list()
 
+        modules = [electrostatic, electrodynamics, magnetism, induced_magnetic_field]
+
+        for module in modules:
+            item = module.question(point, qcode)
+            if bool(item) == True:
+                quest = item
+
         for i in range(self.ntest):
 
             value_list = list()
             resultado = list()
 
-            question = electrodynamics.question(point, qcode)
-        
-            text = question['text']
-            figure = question['figure']
-            for item in question['alternative']:
+            text = quest['text']
+            figure = quest['figure']
+            type = quest['type']
+
+            for item in quest['alternative']:
                 resultado.append(item['point'])
-                value = (str(round(item['choice'],2))+' '+item['unit'])
+                value = {'choice': item['choice'], 'unit': item['unit']}
                 value_list.append(value)
 
-            lista.append({ 'code': qcode, 'test': i, 'type': 'objective', 'text': text, 'figure': figure, 'alternative': value_list, 'result': resultado})
-
-            self.question_list.append(lista)
-
-            self.nquestion +=1
-
-            self.question_point.append(point)
-
-        return self.question_list
-
-    def add_c_question(self, point, qcode):
-
-        lista = list()
-
-        for i in range(self.ntest):
-
-            choice_list = list()
-            resultado = list()
-
-            question = magnetism.c_question(point, qcode)
-        
-            text = question['text']
-            figure = question['figure']
-            for item in question['alternative']:
-                resultado.append(item['point'])
-                choice_list.append(item['choice'])
-
-            lista.append({ 'code': qcode, 'test': i, 'type': 'conceptual', 'text': text, 'figure': figure, 'alternative': choice_list, 'result': resultado})
+            lista.append({ 'code': qcode, 'test': i, 'type': type, 'text': text, 'figure': figure, 'alternative': value_list, 'result': resultado})
 
         self.question_list.append(lista)
 
-        self.nquestion +=1
-
         self.question_point.append(point)
+
+        self.nquestion += 1
 
         return self.question_list
 
@@ -130,6 +113,7 @@ class test():
                 if self.question_list:
 
                     file.write(r'\begin{questions}'+'\n')
+
                     file.write(r'\begin{multicols*}{2}'+'\n')
 
                     for j in range(self.nquestion):
@@ -139,7 +123,7 @@ class test():
                         if self.question_list[j][i]['figure']:
                             os.system(f"cp {BASE_DIR}/src/dbquaest/img/{self.question_list[j][i]['figure']}.jpg .")
                             file.write(r'\begin{center}'+'\n')
-                            file.write(r'\begin{minipage}[c]{0.75\linewidth}'+'\n')
+                            file.write(r'\begin{minipage}[c]{0.50\linewidth}'+'\n')
                             file.write(r'\includegraphics[width=\textwidth]'+'{'+self.question_list[j][i]['figure']+'.jpg}\n')
                             file.write(r'\end{minipage}'+'\n')
                             file.write(r'\end{center}'+'\n')
@@ -148,17 +132,22 @@ class test():
 
                             file.write(r'\begin{oneparchoices}'+'\n')
 
-                            for alternative in self.question_list[j][i]['alternative']:
-                                file.write(r'\choice '+alternative)
+                            for item in self.question_list[j][i]['alternative']:
+                                key_1 = item['choice']
+                                key_2 = item['unit']
+                                if abs(key_1) < 1.e-3 or key_1 > 1.e+3:
+                                    file.write(r'\choice '+f'{key_1:.1e}'+key_2+';')
+                                else:
+                                    file.write(r'\choice '+f'{key_1:7.3f}'+key_2+';')
 
                             file.write(r'\end{oneparchoices}'+'\n')
 
-                        else:
+                        elif self.question_list[j][i]['type'] == 'conceptual':
 
                             file.write(r'\begin{choices}'+'\n')
 
-                            for alternative in self.question_list[j][i]['alternative']:
-                                file.write(r'\choice '+alternative)
+                            for item in self.question_list[j][i]['alternative']:
+                                file.write(r'\choice '+item['choice']+item['unit'])
 
                             file.write(r'\end{choices}'+'\n')
 
@@ -170,7 +159,6 @@ class test():
             file.write(r'\end{document}')
             file.close()
       
-        os.system('pdflatex main.tex')
         os.system('pdflatex main.tex')
         os.system('rm main.aux main.log')
 
