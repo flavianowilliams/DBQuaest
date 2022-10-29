@@ -2,6 +2,7 @@ import os
 import random
 from dbquaest.settings import BASE_DIR
 from dbquaest.electromagnetism import magnetism, electrodynamics, electrostatic, induced_magnetic_field
+from dbquaest.quantum_physics import particle_wave_duality, uncertainty_principle, schrodinger_equation
 
 class test():
 
@@ -68,7 +69,15 @@ class test():
 
         lista = list()
 
-        modules = [electrostatic, electrodynamics, magnetism, induced_magnetic_field]
+        modules = [
+            electrostatic,
+            electrodynamics,
+            magnetism,
+            induced_magnetic_field,
+            particle_wave_duality,
+            uncertainty_principle,
+            schrodinger_equation
+            ]
 
         for i in range(self.ntest):
 
@@ -96,8 +105,6 @@ class test():
         self.question_point.append(point)
 
         self.nquestion += 1
-
-        return self.question_list
 
     def make_exam(self):
 
@@ -137,9 +144,9 @@ class test():
                                 key_1 = item['choice']
                                 key_2 = item['unit']
                                 if abs(key_1) < 1.e-2 or key_1 > 1.e+3:
-                                    file.write(r'\choice '+f'{key_1:.1e}'+key_2+';')
+                                    file.write(f'\\choice {key_1:.1e};')
                                 else:
-                                    file.write(r'\choice '+f'{key_1:7.3f}'+key_2+';')
+                                    file.write(f'\\choice {key_1:7.3f};')
 
                             file.write(r'\end{oneparchoices}'+'\n')
 
@@ -148,7 +155,7 @@ class test():
                             file.write(r'\begin{choices}'+'\n')
 
                             for item in self.question_list[j][i]['alternative']:
-                                file.write(r'\choice '+item['choice']+item['unit'])
+                                file.write(f"\\choice {item['choice']} {item['unit']}")
 
                             file.write(r'\end{choices}'+'\n')
 
@@ -197,7 +204,7 @@ class test():
                         file.write(r'\begin{oneparchoices}'+'\n')
 
                         for alternative in self.question_list[j][i]['result']:
-                            file.write(r'\choice '+str(alternative))
+                            file.write(f'\\choice {alternative}')
 
                         file.write(r'\end{oneparchoices}'+'\n')
 
