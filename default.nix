@@ -9,6 +9,5 @@
 			numpy
 			jupyterlab
 			scipy
-			pyodbc
 			];
 	}

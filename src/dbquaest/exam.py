@@ -1,5 +1,6 @@
 import os
-import random
+import sqlite3
+from datetime import date
 from dbquaest.settings import BASE_DIR
 from dbquaest.electromagnetism import magnetism, electrodynamics, electrostatic, induced_magnetic_field
 from dbquaest.quantum_physics import particle_wave_duality, uncertainty_principle, schrodinger_equation
@@ -232,3 +233,55 @@ class test():
 
 #            for i in range(2):
 #                self.feedback.append(question['point'][self.alphabet.index(self.options[i])])
+
+def make_database():
+
+    database = os.path.exists('dbquaest.sqlite3')
+
+    con = sqlite3.connect("dbquaest.sqlite3")
+    cur = con.cursor()
+
+    if bool(database) == False:
+        cur.execute("CREATE TABLE test(title, subtitle, date, code_1, code_2, code_3, code_4, code_5)")
+    else:
+        print('The database already exists')
+
+class Testdb():
+
+#    def __init__(self):
+#
+#        self.con = sqlite3.connect("dbquaest.sqlite3")
+#        self.cur = self.con.cursor()
+
+    def create(self, title, subtitle, list_input):
+
+        con = sqlite3.connect("dbquaest.sqlite3")
+        cur = con.cursor()
+
+        question_list = list()
+
+        for item in list_input:
+            question_list.append(item)
+
+        for item in range(len(list_input),5):
+            question_list.append('')
+
+        cur.execute(f"""
+            INSERT INTO test VALUES
+            ('{title}', '{subtitle}', '{date.today()}', '{question_list[0]}', '{question_list[1]}', '{question_list[2]}', '{question_list[3]}', '{question_list[4]}')
+        """)
+
+        con.commit()
+        con.close()
+
+    def delete(self, title, subtitle):
+
+        con = sqlite3.connect("dbquaest.sqlite3")
+        cur = con.cursor()
+
+        cur.execute(f"""
+            DELETE FROM test WHERE title = '{title}' AND subtitle = '{subtitle}'
+        """)
+
+        con.commit()
+        con.close()
