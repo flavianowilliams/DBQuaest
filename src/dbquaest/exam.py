@@ -286,7 +286,8 @@ def make_database():
             text_5 varchar DEFAULT NULL,
             figure_5 varchar(10) DEFAULT NULL,
             point_5 decimal DEFAULT NULL,
-            CONSTRAINT fk_model FOREIGN KEY (fk_model) REFERENCES model(ROWID)
+            CONSTRAINT fk_model FOREIGN KEY (fk_model) REFERENCES model(ROWID),
+            CONSTRAINT fk_student FOREIGN KEY (fk_student) REFERENCES student(ROWID)
             )""")
         cur.execute(r"""CREATE TABLE student(
             created date NOT NULL,
@@ -524,7 +525,7 @@ class Test():
 
         return template
 
-    def template_document(self, code, title, subtitle):
+    def template_document(self, code, title, subtitle, name, clss):
 
         template = f"""
         \\begin{{minipage}}[b]{{0.75\linewidth}}
@@ -537,15 +538,21 @@ class Test():
         \\end{{minipage}}
         \\begin{{minipage}}[b]{{0.20\linewidth}}
             \\begin{{flushright}}
-                {{\\bf \large Código: {code}}}
+                {{\\bf \large Code: {code}}}
             \\end{{flushright}}
         \\end{{minipage}}
         \\vspace{{0.5cm}} \\hrule \\vspace{{0.5cm}}
         \\begin{{minipage}}{{0.75\linewidth}}
-            Aluno:
+            \\begin{{flushleft}}
+                Student: {name}
+            \\end{{flushleft}}
+        \\end{{minipage}}
+        \\begin{{minipage}}{{0.20\linewidth}}
+            \\begin{{flushright}}
+                Class: {clss}
+            \\end{{flushright}}
         \\end{{minipage}}
         \\vspace{{0.5cm}} \\hrule \\vspace{{0.5cm}}
-
         """
         return template
 
@@ -555,14 +562,15 @@ class Test():
         cur = con.cursor()
 
         res = cur.execute(f"""
-            SELECT model.title, model.subtitle, test.type, test.code, test.text_1, test.figure_1
-            FROM model
-            INNER JOIN test
-            ON model.ROWID = test.fk_model
+            SELECT model.title, model.subtitle, student.name, test.class, test.code, test.text_1, test.figure_1
+            FROM model, student, test
             WHERE class = '{clss}'
         """)
 
         model_list = res.fetchall()
+
+        con.commit()
+        con.close()
 
         template = r"""
 \documentclass[12pt, addpoints]{exam}
@@ -589,6 +597,7 @@ class Test():
 
         title = model_list[0][0]
         subtitle = model_list[0][1]
+        clss = model_list[0][3]
 
         with open('main.tex', 'w') as file:
 
@@ -604,14 +613,15 @@ class Test():
 #            var = var.split(',')
 #            var_list = [float(u) for u in var]
 #            list.append(var_list)
-                code = model_list[i][3]
-                txt = model_list[i][4]
-                figure = model_list[i][5]
+                name = model_list[i][2]
+                code = model_list[i][4]
+                txt = model_list[i][5]
+                figure = model_list[i][6]
 
                 if figure:
                     os.system(f"cp {BASE_DIR}/src/dbquaest/img/{figure}.jpg .")
 
-                file.write(self.template_document(code, title, subtitle))
+                file.write(self.template_document(code, title, subtitle, name, clss))
 #
                 file.write(r'\begin{questions}'+'\n')
 #
