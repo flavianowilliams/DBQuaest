@@ -8,31 +8,26 @@ def question(qpoint, opt):
 
         alt_list = [{
             'choice': '$\Delta x=(p/m)\Delta t$',
-            'unit': '',
             'point': qpoint
             }]
 
         alt_list.append({
             'choice': '$\Delta x = 0$',
-            'unit': '',
             'point': 0.0
             })
 
         alt_list.append({
             'choice': '$\Delta x=\Delta t$',
-            'unit': '',
             'point': 0.0
             })
 
         alt_list.append({
             'choice': '$\Delta x=(m/p)\Delta t$',
-            'unit': '',
             'point': 0.0
             })
 
         alt_list.append({
             'choice': '$\Delta x=\Delta p$',
-            'unit': '',
             'point': 0.0
             })
 
@@ -40,11 +35,13 @@ def question(qpoint, opt):
 
         figure = ''
 
+        unit = ''
+
         indx = random.sample(range(0,5),5)
 
         alternative_list = [alt_list[u] for u in indx]
 
-        context = {'type': type, 'text': text, 'figure': figure, 'alternative': alternative_list}
+        context = {'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
     else:
 

@@ -39,17 +39,19 @@ def question(qpoint, opt):
 
         figure = ''
 
-        alt_list = [{'choice': 'Paralelo ao papel e circular no sentido anti-horário.', 'unit': '', 'point': qpoint}]
-        alt_list.append({'choice': 'Paralelo ao papel e circular no sentido horário.', 'unit': '', 'point': 0.5*qpoint})
-        alt_list.append({'choice': 'Paralelo ao papel e da direita para a esquerda.', 'unit': '', 'point': 0.0})
-        alt_list.append({'choice': 'Paralelo ao papel e da esquerda para a direita.', 'unit': '', 'point': 0.0})
-        alt_list.append({'choice': 'Paralelo ao papel e na vertical.', 'unit': '', 'point': 0.0})
+        unit = ''
+
+        alt_list = [{'choice': 'Paralelo ao papel e circular no sentido anti-horário.', 'point': qpoint}]
+        alt_list.append({'choice': 'Paralelo ao papel e circular no sentido horário.', 'point': 0.5*qpoint})
+        alt_list.append({'choice': 'Paralelo ao papel e da direita para a esquerda.', 'point': 0.0})
+        alt_list.append({'choice': 'Paralelo ao papel e da esquerda para a direita.', 'point': 0.0})
+        alt_list.append({'choice': 'Paralelo ao papel e na vertical.', 'point': 0.0})
 
         indx = random.sample(range(0,5),5)
 
         alternative_list = [alt_list[u] for u in indx]
 
-        context = {'type': type, 'text': text, 'figure': figure, 'alternative': alternative_list}
+        context = {'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
     else:
 

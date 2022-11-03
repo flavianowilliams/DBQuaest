@@ -7,32 +7,27 @@ def question(qpoint, opt):
         type = 'conceptual'
 
         alt_list = [{
-            'choice': r'$E=\frac{\hbar^2k^2}{2m}$',
-            'unit': '',
+            'choice': '$E=\\frac{\hbar^2k^2}{2m}$',
             'point': qpoint
             }]
 
         alt_list.append({
-            'choice': r'$\infty$',
-            'unit': '',
+            'choice': '$E=\infty$',
             'point': 0.0
             })
 
         alt_list.append({
-            'choice': r'$E=\hbar k$',
-            'unit': '',
+            'choice': '$E = \\frac{mk^2}{2}$',
             'point': 0.0
             })
 
         alt_list.append({
-            'choice': r'$E = \frac{mk^2}{2}$',
-            'unit': '',
+            'choice': '$E=\hbar k$',
             'point': 0.0
             })
 
         alt_list.append({
-            'choice': r'Zero',
-            'unit': '',
+            'choice': '$E = \\frac{mk^2}{2}$',
             'point': 0.0
             })
 
@@ -40,11 +35,13 @@ def question(qpoint, opt):
 
         figure = ''
 
+        unit = ''
+
         indx = random.sample(range(0,5),5)
 
         alternative_list = [alt_list[u] for u in indx]
 
-        context = {'type': type, 'text': text, 'figure': figure, 'alternative': alternative_list}
+        context = {'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
     else:
 

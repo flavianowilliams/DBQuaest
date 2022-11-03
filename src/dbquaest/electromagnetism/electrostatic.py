@@ -42,17 +42,19 @@ def question(qpoint, opt):
 
         figure = ''
 
-        alt_list = [{'choice': r'$b\rightarrow a$ ou $c\rightarrow d$', 'unit': '', 'point': qpoint}]
-        alt_list.append({'choice': r'$a\rightarrow b$ ou $d\rightarrow c$', 'unit': '', 'point': 0.0})
-        alt_list.append({'choice': r'$b\rightarrow c$ ou $a\rightarrow d$', 'unit': '', 'point': 0.0})
-        alt_list.append({'choice': r'$c\rightarrow b$ ou $d\rightarrow a$', 'unit': '', 'point': 0.0})
-        alt_list.append({'choice': r'$b\rightarrow a\rightarrow d\rightarrow c$ ou $c\rightarrow d\rightarrow a\rightarrow b$', 'unit': '', 'point': 0.0})
+        unit = ''
+
+        alt_list = [{'choice': r'$b\rightarrow a$ ou $c\rightarrow d$', 'point': qpoint}]
+        alt_list.append({'choice': r'$a\rightarrow b$ ou $d\rightarrow c$', 'point': 0.0})
+        alt_list.append({'choice': r'$b\rightarrow c$ ou $a\rightarrow d$', 'point': 0.0})
+        alt_list.append({'choice': r'$c\rightarrow b$ ou $d\rightarrow a$', 'point': 0.0})
+        alt_list.append({'choice': r'$b\rightarrow a\rightarrow d\rightarrow c$ ou $c\rightarrow d\rightarrow a\rightarrow b$', 'point': 0.0})
 
         indx = random.sample(range(0,5),5)
 
         alternative_list = [alt_list[u] for u in indx]
 
-        context = {'type': type, 'text': text, 'figure': figure, 'alternative': alternative_list}
+        context = {'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
     else:
 

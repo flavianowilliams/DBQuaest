@@ -15,25 +15,21 @@ def question(qpoint, opt):
 
         alt_list = [{
             'choice': p2[0]*p3[0]/(var*1.e-9)-p1[0],
-            'unit': ' eV',
             'point': qpoint
             }]
 
         alt_list.append({
             'choice': p2[0]*p3[0]/var-p1[0],
-            'unit': ' eV',
             'point': 0.75*qpoint
             })
 
         alt_list.append({
             'choice': p2[0]*var*1.e-9-p1[0],
-            'unit': ' eV',
             'point': 0.25*qpoint
             })
 
         alt_list.append({
             'choice': p2[0]*p3[0]/(var*1.e-9)+p1[0],
-            'unit': ' eV',
             'point': 0.25*qpoint
             })
 
@@ -41,15 +37,17 @@ def question(qpoint, opt):
 
         figure = ''
 
+        unit = 'eV'
+
         for i in range(6):
             error = random.uniform(p4[0], p4[1])
-            alt_list.append({'choice': p2[0]*p3[0]/(error*1.e-9)-p1[0], 'unit': ' eV', 'point': 0.0})
+            alt_list.append({'choice': p2[0]*p3[0]/(error*1.e-9)-p1[0], 'point': 0.0})
 
         indx = random.sample(range(0,10),10)
 
         alternative_list = [alt_list[u] for u in indx]
 
-        context = {'type': type, 'text': text, 'figure': figure, 'alternative': alternative_list}
+        context = {'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
     elif opt == 'OQPWD002':
 
@@ -64,55 +62,46 @@ def question(qpoint, opt):
 
         alt_list = [{
             'choice': 6.62607015e-34/((var_1*1.0e-3)*(var_2/3.6)),
-            'unit': ' m',
             'point': qpoint
             }]
 
         alt_list.append({
             'choice': 6.62607015e-34/((var_1)*(var_2/3.6)),
-            'unit': ' m',
             'point': 0.75*qpoint
             })
 
         alt_list.append({
             'choice': 6.62607015e-34/((var_1*1.0e-3)*(var_2)),
-            'unit': ' eV',
             'point': 0.75*qpoint
             })
 
         alt_list.append({
             'choice': 6.62607015e-34/(var_1*var_2),
-            'unit': ' eV',
             'point': 0.5*qpoint
             })
 
         alt_list.append({
             'choice': 6.62607015e-34/((var_1*1.0e+3)*(var_2/3.6)),
-            'unit': ' m',
             'point': 0.75
             })
 
         alt_list.append({
             'choice': 6.62607015e-34/((var_1*1.0e-3)*(var_2*3.6)),
-            'unit': ' m',
             'point': 0.75
             })
 
         alt_list.append({
             'choice': 6.62607015e-34/((var_1*1.0e+3)*(var_2*3.6)),
-            'unit': ' m',
             'point': 0.5
             })
 
         alt_list.append({
             'choice': 6.62607015e-34/((var_2/3.6)),
-            'unit': ' m',
             'point': 0.0
             })
 
         alt_list.append({
             'choice': 6.62607015e-34*((var_1*1.0e-3)*(var_2/3.6)),
-            'unit': ' m',
             'point': 0.0
             })
 
@@ -120,11 +109,12 @@ def question(qpoint, opt):
 
         figure = ''
 
+        unit = 'nm'
+
         error_1 = random.uniform(p2[0], p2[1])
         error_2 = random.uniform(p3[0], p3[1])
         alt_list.append({
             'choice': 6.62607015e-34/((error_1*1.0e-3)*(error_2/3.6)),
-            'unit': ' m',
             'point': 0.0
             })
 
@@ -132,7 +122,7 @@ def question(qpoint, opt):
 
         alternative_list = [alt_list[u] for u in indx]
 
-        context = {'type': type, 'text': text, 'figure': figure, 'alternative': alternative_list}
+        context = {'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
     else:
 
