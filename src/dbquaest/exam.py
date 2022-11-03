@@ -305,10 +305,13 @@ def make_database():
 
 class Model():
 
+    def __init__(self):
+
+        self.con = sqlite3.connect("dbquaest.sqlite3")
+
     def create(self, title, subtitle, questions):
 
-        con = sqlite3.connect("dbquaest.sqlite3")
-        cur = con.cursor()
+        cur = self.con.cursor()
 
         question_list = list()
         code_list = list()
@@ -325,20 +328,18 @@ class Model():
             INSERT INTO model VALUES ('{title}', '{subtitle}', '{date.today()}', '{date.today()}', '{question_list[0]}', '{code_list[0]}', '{question_list[1]}', '{code_list[1]}', '{question_list[2]}', '{code_list[2]}', '{question_list[3]}', '{code_list[3]}', '{question_list[4]}', '{code_list[4]}')
         """)
 
-        con.commit()
-        con.close()
-
     def delete(self, title, subtitle):
 
-        con = sqlite3.connect("dbquaest.sqlite3")
-        cur = con.cursor()
+        cur = self.con.cursor()
 
         cur.execute(f"""
             DELETE FROM model WHERE title = '{title}' AND subtitle = '{subtitle}'
         """)
 
-        con.commit()
-        con.close()
+    def save(self):
+
+        self.con.commit()
+        self.con.close()
 
 ######################################################################################################
 # classe Estudante
@@ -346,10 +347,13 @@ class Model():
 
 class Student():
 
+    def __init__(self):
+
+        self.con = sqlite3.connect("dbquaest.sqlite3")
+
     def create(self, std):
 
-        con = sqlite3.connect("dbquaest.sqlite3")
-        cur = con.cursor()
+        cur = self.con.cursor()
 
         cur.execute(f"""
             INSERT INTO student VALUES(
@@ -361,8 +365,10 @@ class Student():
                 )
             """)
 
-        con.commit()
-        con.close()
+    def save(self):
+
+        self.con.commit()
+        self.con.close()
 
 ######################################################################################################
 # classe Teste
@@ -370,12 +376,15 @@ class Student():
 
 class Test():
 
+    def __init__(self):
+
+        self.con = sqlite3.connect("dbquaest.sqlite3")
+
     def create(self, model, std, clss):
 
         ntest = len(std)
 
-        con = sqlite3.connect("dbquaest.sqlite3")
-        cur = con.cursor()
+        cur = self.con.cursor()
 
         res = cur.execute(f"""
             SELECT code_1, point_1, code_2, point_2, code_3, point_3, code_4, point_4, code_5, point_5
@@ -498,20 +507,13 @@ class Test():
                     )
             """)
 
-        con.commit()
-        con.close()
-
     def delete(self, id):
 
-        con = sqlite3.connect("dbquaest.sqlite3")
-        cur = con.cursor()
+        cur = self.con.cursor()
 
         cur.execute(f"""
             DELETE FROM test WHERE rowid='{id}'
         """)
-
-        con.commit()
-        con.close()
 
     def template_figure(self, figure):
 
@@ -558,8 +560,7 @@ class Test():
 
     def make_exam(self, clss):
 
-        con = sqlite3.connect("dbquaest.sqlite3")
-        cur = con.cursor()
+        cur = self.con.cursor()
 
         res = cur.execute(f"""
             SELECT model.title, model.subtitle, student.name, test.class, test.code, test.text_1, test.figure_1
@@ -568,9 +569,6 @@ class Test():
         """)
 
         model_list = res.fetchall()
-
-        con.commit()
-        con.close()
 
         template = r"""
 \documentclass[12pt, addpoints]{exam}
