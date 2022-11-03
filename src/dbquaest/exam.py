@@ -251,6 +251,7 @@ def make_database():
             title varchar(255) NOT NULL,
             subtitle varchar(255) NOT NULL,
             created date NOT NULL,
+            updated date NOT NULL,
             code_1 varchar(8),
             point_1 decimal,
             code_2 varchar(8),
@@ -264,7 +265,9 @@ def make_database():
             )""")
         cur.execute(r"""CREATE TABLE test(
             created date NOT NULL,
+            updated date NOT NULL,
             fk_model integer NOT NULL,
+            fk_student integer NOT NULL,
             class varchar(25) NOT NULL,
             code integer NOT NULL,
             type varchar(10),
@@ -284,6 +287,13 @@ def make_database():
             figure_5 varchar(10) DEFAULT NULL,
             point_5 decimal DEFAULT NULL,
             CONSTRAINT fk_model FOREIGN KEY (fk_model) REFERENCES model(ROWID)
+            )""")
+        cur.execute(r"""CREATE TABLE student(
+            created date NOT NULL,
+            updated date NOT NULL,
+            name varchar(255) NOT NULL UNIQUE,
+            email varchar(255) DEFAULT NULL,
+            telephone varchar(255) DEFAULT NULL
             )""")
     else:
         print('The database already exists')
@@ -311,7 +321,7 @@ class Model():
             code_list.append(0)
 
         cur.execute(f"""
-            INSERT INTO model VALUES ('{title}', '{subtitle}', '{date.today()}', '{question_list[0]}', '{code_list[0]}', '{question_list[1]}', '{code_list[1]}', '{question_list[2]}', '{code_list[2]}', '{question_list[3]}', '{code_list[3]}', '{question_list[4]}', '{code_list[4]}')
+            INSERT INTO model VALUES ('{title}', '{subtitle}', '{date.today()}', '{date.today()}', '{question_list[0]}', '{code_list[0]}', '{question_list[1]}', '{code_list[1]}', '{question_list[2]}', '{code_list[2]}', '{question_list[3]}', '{code_list[3]}', '{question_list[4]}', '{code_list[4]}')
         """)
 
         con.commit()
@@ -330,12 +340,38 @@ class Model():
         con.close()
 
 ######################################################################################################
+# classe Estudante
+######################################################################################################
+
+class Student():
+
+    def create(self, std):
+
+        con = sqlite3.connect("dbquaest.sqlite3")
+        cur = con.cursor()
+
+        cur.execute(f"""
+            INSERT INTO student VALUES(
+                '{date.today()}',
+                '{date.today()}',
+                '{std['name']}',
+                '{std['email']}',
+                '{std['telephone']}'
+                )
+            """)
+
+        con.commit()
+        con.close()
+
+######################################################################################################
 # classe Teste
 ######################################################################################################
 
 class Test():
 
-    def create(self, model, ntest, clss):
+    def create(self, model, std, clss):
+
+        ntest = len(std)
 
         con = sqlite3.connect("dbquaest.sqlite3")
         cur = con.cursor()
@@ -347,6 +383,18 @@ class Test():
         """)
 
         model_list = res.fetchone()
+
+        std_data = []
+
+        for name in std:
+            res = cur.execute(f"""
+                SELECT ROWID
+                FROM student
+                WHERE name = '{name}';
+            """)
+
+            var = res.fetchone()
+            std_data.append(var[0])
 
         question_list = []
         for i in range(0,10,2):
@@ -425,7 +473,9 @@ class Test():
             cur.execute(f"""
                 INSERT INTO test VALUES (
                     '{date.today()}',
+                    '{date.today()}',
                     '{model}',
+                    '{std_data[i]}',
                     '{clss}',
                     '{i}',
                     '{type}',
@@ -580,23 +630,3 @@ class Test():
       
         os.system('pdflatex main.tex')
         os.system('rm main.aux main.log')
-
-######################################################################################################
-# classe Teste
-######################################################################################################
-
-class Student():
-
-    def create(self, name, email, phone):
-
-        con = sqlite3.connect("dbquaest.sqlite3")
-        cur = con.cursor()
-
-        res = cur.execute(f"""
-            SELECT created, updated, name, email, phone
-            FROM student
-        """)
-
-        model_list = res.fetchone()
-
-        question_list = []
