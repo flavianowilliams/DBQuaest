@@ -1,8 +1,5 @@
-from ast import If
-import os
-from re import template
-from secrets import choice
 import sqlite3
+import os
 from datetime import date
 from dbquaest.settings import BASE_DIR
 from dbquaest.electromagnetism import magnetism, electrodynamics, electrostatic, induced_magnetic_field
@@ -222,19 +219,6 @@ class test_old():
         os.system('pdflatex main_result.tex')
         os.system('rm main_result.aux main_result.log')
 
-    def set_correction(self, test, options):
-
-        self.alphabet = 'A B C D E F G H I J'.split()
-        self.feedback = list()
-
-        for i in range(self.nquestion):
-
-            indx = self.alphabet.index(options[i])
-            self.feedback.append(self.question_list[i][test]['result'][indx])
-
-#            for i in range(2):
-#                self.feedback.append(question['point'][self.alphabet.index(self.options[i])])
-
 ######################################################################################################
 # criando base de dados SQL
 ######################################################################################################
@@ -286,15 +270,31 @@ def make_database():
             text_5 varchar DEFAULT NULL,
             figure_5 varchar(10) DEFAULT NULL,
             point_5 decimal DEFAULT NULL,
-            CONSTRAINT fk_model FOREIGN KEY (fk_model) REFERENCES model(ROWID),
-            CONSTRAINT fk_student FOREIGN KEY (fk_student) REFERENCES student(ROWID)
+            FOREIGN KEY (fk_model) REFERENCES model(ROWID),
+            FOREIGN KEY (fk_student) REFERENCES student(ROWID)
             )""")
         cur.execute(r"""CREATE TABLE student(
             created date NOT NULL,
             updated date NOT NULL,
-            name varchar(255) NOT NULL UNIQUE,
+            name varchar(255) NOT NULL,
             email varchar(255) DEFAULT NULL,
             telephone varchar(255) DEFAULT NULL
+            )""")
+        cur.execute(r"""CREATE TABLE correction(
+            created date NOT NULL,
+            updated date NOT NULL,
+            fk_test integer NOT NULL,
+            choice_1 varchar(1) DEFAULT NULL,
+            point_1 DEFAULT NULL,
+            choice_2 varchar(1) DEFAULT NULL,
+            point_2 DEFAULT NULL,
+            choice_3 varchar(1) DEFAULT NULL,
+            point_3 DEFAULT NULL,
+            choice_4 varchar(1) DEFAULT NULL,
+            point_4 DEFAULT NULL,
+            choice_5 varchar(1) DEFAULT NULL,
+            point_5 DEFAULT NULL,
+            FOREIGN KEY (fk_test) REFERENCES test(ROWID)
             )""")
     else:
         print('The database already exists')
@@ -563,12 +563,22 @@ class Test():
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT model.title, model.subtitle, student.name, test.class, test.code, test.text_1, test.figure_1
-            FROM model, student, test
+            SELECT model.title, model.subtitle, student.name, test.class, test.code, test.text_1, test.figure_1, test.text_2, test.figure_2, test.text_3, test.figure_3, test.text_4, test.figure_4, test.text_5, test.figure_5
+            FROM((test
+            INNER JOIN student ON test.fk_student = student.ROWID)
+            INNER JOIN model ON test.fk_model = model.ROWID)
             WHERE class = '{clss}'
         """)
 
         model_list = res.fetchall()
+
+        res = cur.execute(f"""
+            SELECT COUNT(*) FROM test WHERE class = '{clss}'
+        """)
+
+        ntest = res.fetchone()
+
+        ntest = ntest[0]
 
         template = r"""
 \documentclass[12pt, addpoints]{exam}
@@ -603,38 +613,119 @@ class Test():
 
             file.write(r'\begin{document}'+'\n')
 
-            for i in range(0,len(model_list)):
-#            var = model_list[i][2]
-#            var = var.replace('[', '')
-#            var = var.replace(']', '')
-#            var = var.replace(' ', '')
-#            var = var.split(',')
-#            var_list = [float(u) for u in var]
-#            list.append(var_list)
+            for i in range(0,ntest):
                 name = model_list[i][2]
                 code = model_list[i][4]
-                txt = model_list[i][5]
-                figure = model_list[i][6]
-
-                if figure:
-                    os.system(f"cp {BASE_DIR}/src/dbquaest/img/{figure}.jpg .")
 
                 file.write(self.template_document(code, title, subtitle, name, clss))
-#
-                file.write(r'\begin{questions}'+'\n')
-#
-                file.write(r'\begin{multicols*}{2}'+'\n')
-#
-                file.write(txt)
+    #
+                file.write(f'\\begin{{questions}}\n')
+    #
+                file.write(f'\\begin{{multicols*}}{{2}}\n')
+    #
+                for j in range(0,10,2):
+                    txt = model_list[i][j+5]
+                    figure = model_list[i][j+6]
 
-                file.write(r'\end{multicols*}'+'\n')
+                    if figure:
+                        os.system(f"cp {BASE_DIR}/src/dbquaest/img/{figure}.jpg .")
 
-                file.write(r'\end{questions}'+'\n')
+                    file.write(txt)
 
-                file.write(r'\newpage')
+                file.write(f'\\end{{multicols*}}\n')
 
-            file.write(r'\end{document}')
+                file.write(f'\\end{{questions}}\n')
+
+                file.write(f'\\newpage\n')
+
+            file.write(f'\\end{{document}}')
+
             file.close()
       
         os.system('pdflatex main.tex')
         os.system('rm main.aux main.log')
+
+    def save(self):
+
+        self.con.commit()
+        self.con.close()
+
+######################################################################################################
+# classe Correção
+######################################################################################################
+
+class Correction():
+
+    def __init__(self):
+
+        self.con = sqlite3.connect("dbquaest.sqlite3")
+
+    def create(self, code, option_list):
+
+        cur = self.con.cursor()
+
+        res = cur.execute(f"""
+            SELECT ROWID, point_1, point_2, point_3, point_4, point_5
+            FROM test
+            WHERE code = '{code}';
+        """)
+
+        model_list = res.fetchone()
+
+        feedback_list = []
+
+        for i in range(5):
+
+            eval = evaluate(model_list[i+1], option_list[i])
+
+            feedback_list.append(eval)
+
+        id = model_list[0]
+
+        cur.execute(f"""
+            INSERT INTO correction VALUES(
+                '{date.today()}',
+                '{date.today()}',
+                '{id}',
+                '{option_list[0]}',
+                '{feedback_list[0]}',
+                '{option_list[1]}',
+                '{feedback_list[1]}',
+                '{option_list[2]}',
+                '{feedback_list[2]}',
+                '{option_list[3]}',
+                '{feedback_list[3]}',
+                '{option_list[4]}',
+                '{feedback_list[4]}'
+                )
+            """)
+
+    def delete(self, id):
+
+        cur = self.con.cursor()
+
+        cur.execute(f"""
+            DELETE FROM correction WHERE rowid='{id}'
+        """)
+
+    def save(self):
+
+        self.con.commit()
+        self.con.close()
+
+def evaluate(var, option):
+
+    alphabet_list = 'A B C D E F G H I J'.split()
+
+    var = var.replace('[', '')
+    var = var.replace(']', '')
+    var = var.replace(' ', '')
+    var = var.split(',')
+
+    point_list = [float(u) for u in var]
+
+    indx = alphabet_list.index(option)
+
+    feedback = point_list[indx]
+
+    return feedback
