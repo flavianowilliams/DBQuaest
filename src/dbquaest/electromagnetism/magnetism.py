@@ -6,7 +6,7 @@ def question(qpoint, opt):
 
         type = 'conceptual'
 
-        text = r"""A ﬁgura abaixo mostra a trajetória de uma partícula eletricamente carregada. $\\vec{{v}}$ representa a velocidade atravessando um campo magnético $\\vec{{B}}$. Determine a sua trajetória devido a ação da força magnética atuando sobre ela.
+        text = r"""A ﬁgura abaixo mostra a trajetória de uma partícula eletricamente carregada. $\vec{{v}}$ representa a velocidade atravessando um campo magnético $\vec{{B}}$. Determine a sua trajetória devido a ação da força magnética atuando sobre ela.
         
         \begin{center}
             \begin{minipage}[c]{0.5\linewidth}
