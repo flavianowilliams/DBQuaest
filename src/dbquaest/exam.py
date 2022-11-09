@@ -362,10 +362,10 @@ class Test():
         self.con.close()
 
 ######################################################################################################
-# classe Correção
+# classe Resultado
 ######################################################################################################
 
-class Correction():
+class Result():
 
     def __init__(self):
 
@@ -411,6 +411,70 @@ class Correction():
                 )
             """)
 
+    def rendering(self, clss_input):
+
+        cur = self.con.cursor()
+
+        res = cur.execute(f"""
+            SELECT test.class, test.code, student.name, model.title, model.subtitle, correction.choice_1, correction.point_1, correction.choice_2, correction.point_2, correction.choice_3, correction.point_3, correction.choice_4, correction.point_4, correction.choice_5, correction.point_5
+            FROM correction, test, student, model
+            WHERE class = '{clss_input}'
+            AND correction.fk_test = test.ROWID
+            AND test.fk_student = student.ROWID
+            AND test.fk_model = model.ROWID;
+        """)
+
+        model_list = res.fetchall()
+
+        print(len(model_list))
+
+        os.system('mkdir result')
+
+        for correction in model_list:
+
+            clss = correction[0]
+            code = correction[1]
+            name = correction[2]
+            title = correction[3]
+            subtitle = correction[4]
+
+            output = f'result_{code}'
+
+            with open(f'result/{output}.tex', 'w') as file:
+
+                tmplt = template()
+
+                file.write(tmplt)
+
+                file.write(r'\begin{document}'+'\n')
+
+                file.write(template_document(code, title, subtitle, name, clss))
+    
+                file.write(f'\\begin{{questions}}\n')
+
+#                file.write(f'\\begin{{multicols}}{{2}}\n')
+    
+                for j in range(0,10,2):
+
+                    if correction[j+5]:
+                       file.write(f'\question Question {j+1}.')
+                       file.write(r'\begin{itemize}')
+                       file.write(f'\item You choose the alternative {correction[j+5]}.')
+                       file.write(f'\item You got {correction[j+6]} points.')
+                       file.write(f'\item Considerations: ')
+                       file.write(r'\end{itemize}')
+
+#                file.write(f'\\end{{multicols}}\n')
+
+                file.write(f'\\end{{questions}}\n')
+
+                file.write(f'\\end{{document}}')
+
+                file.close()
+      
+            os.system(f'pdflatex -halt-on-error -output-directory result result/{output}.tex')
+            os.system(f'rm result/{output}.aux result/{output}.log')
+
     def delete(self, id):
 
         cur = self.con.cursor()
@@ -438,4 +502,3 @@ def evaluate(var, option):
     feedback = point_list[indx]
 
     return feedback
-
