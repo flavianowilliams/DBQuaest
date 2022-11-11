@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import email.message, smtplib
 from datetime import date
 from dbquaest.settings import BASE_DIR, MODULES
 from dbquaest.tex import template, template_figure, template_document
@@ -367,78 +368,105 @@ class Test():
 
 class Result():
 
-    def __init__(self):
+    def __init__(self, clss_input):
 
         self.con = sqlite3.connect("dbquaest.sqlite3")
 
-    def create(self, code, option_list):
-
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT ROWID, point_1, point_2, point_3, point_4, point_5
-            FROM test
-            WHERE code = '{code}';
-        """)
-
-        model_list = res.fetchone()
-
-        feedback_list = []
-
-        for i in range(5):
-
-            eval = evaluate(model_list[i+1], option_list[i])
-
-            feedback_list.append(eval)
-
-        id = model_list[0]
-
-        cur.execute(f"""
-            INSERT INTO correction VALUES(
-                '{date.today()}',
-                '{date.today()}',
-                '{id}',
-                '{option_list[0]}',
-                '{feedback_list[0]}',
-                '{option_list[1]}',
-                '{feedback_list[1]}',
-                '{option_list[2]}',
-                '{feedback_list[2]}',
-                '{option_list[3]}',
-                '{feedback_list[3]}',
-                '{option_list[4]}',
-                '{feedback_list[4]}'
-                )
-            """)
-
-    def rendering(self, clss_input):
-
-        cur = self.con.cursor()
-
-        res = cur.execute(f"""
-            SELECT test.class, test.code, student.name, model.title, model.subtitle, correction.choice_1, correction.point_1, correction.choice_2, correction.point_2, correction.choice_3, correction.point_3, correction.choice_4, correction.point_4, correction.choice_5, correction.point_5
-            FROM correction, test, student, model
+            SELECT test.class, test.code, test.ROWID, test.point_1, test.point_2, test.point_3, test.point_4, test.point_5, student.name, student.email, model.title, model.subtitle
+            FROM test, student, model
             WHERE class = '{clss_input}'
-            AND correction.fk_test = test.ROWID
-            AND test.fk_student = student.ROWID
-            AND test.fk_model = model.ROWID;
+            AND test.fk_model = model.ROWID
+            AND test.fk_student = student.ROWID;
         """)
 
-        model_list = res.fetchall()
+        list = res.fetchall()
 
-        print(len(model_list))
+        self.clss = [item[0] for item in list]
+        self.code = [item[1] for item in list]
+        self.test = [item[2] for item in list]
+
+        self.point_1 = [item[3] for item in list]
+        self.point_2 = [item[4] for item in list]
+        self.point_3 = [item[5] for item in list]
+        self.point_4 = [item[6] for item in list]
+        self.point_5 = [item[7] for item in list]
+
+        self.name = [item[8] for item in list]
+        self.email = [item[9] for item in list]
+        self.title = [item[10] for item in list]
+        self.subtitle = [item[11] for item in list]
+
+    def create(self,option_list):
+
+        cur = self.con.cursor()
+
+        for i in range(len(self.code)):
+
+            for item in option_list:
+
+                if item['code'] == self.code[i]:
+
+                    lst = item['choice']
+
+            feedback_list = [evaluate(self.point_1[i], lst[0])]
+            feedback_list.append(evaluate(self.point_2[i], lst[1]))
+            feedback_list.append(evaluate(self.point_3[i], lst[2]))
+            feedback_list.append(evaluate(self.point_4[i], lst[3]))
+            feedback_list.append(evaluate(self.point_5[i], lst[4]))
+
+            choice = [item for item in option_list[i]['choice']]
+
+            cur.execute(f"""
+                INSERT INTO correction VALUES(
+                    '{date.today()}',
+                    '{date.today()}',
+                    '{self.test[i]}',
+                    '{choice[0]}',
+                    '{feedback_list[0]}',
+                    '{choice[1]}',
+                    '{feedback_list[1]}',
+                    '{choice[2]}',
+                    '{feedback_list[2]}',
+                    '{choice[3]}',
+                    '{feedback_list[3]}',
+                    '{choice[4]}',
+                    '{feedback_list[4]}'
+                    )
+                """)
+
+    def rendering(self):
+
+        cur = self.con.cursor()
+
+        res = cur.execute(f"""
+            SELECT correction.choice_1, correction.choice_2, correction.choice_3, correction.choice_4, correction.choice_5, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5
+            FROM test, correction
+            WHERE class = '{self.clss[0]}'
+            AND correction.fk_test = test.ROWID;
+        """)
+
+        list = res.fetchall()
+
+        self.choice_1 = [item[0] for item in list]
+        self.choice_2 = [item[1] for item in list]
+        self.choice_3 = [item[2] for item in list]
+        self.choice_4 = [item[3] for item in list]
+        self.choice_5 = [item[4] for item in list]
+
+        self.result_1 = [item[5] for item in list]
+        self.result_2 = [item[6] for item in list]
+        self.result_3 = [item[7] for item in list]
+        self.result_4 = [item[8] for item in list]
+        self.result_5 = [item[9] for item in list]
 
         os.system('mkdir result')
 
-        for correction in model_list:
+        for i in range(len(self.code)):
 
-            clss = correction[0]
-            code = correction[1]
-            name = correction[2]
-            title = correction[3]
-            subtitle = correction[4]
-
-            output = f'result_{code}'
+            output = f'result_{self.code[i]}'
 
             with open(f'result/{output}.tex', 'w') as file:
 
@@ -448,23 +476,17 @@ class Result():
 
                 file.write(r'\begin{document}'+'\n')
 
-                file.write(template_document(code, title, subtitle, name, clss))
+                file.write(template_document(self.code[i], self.title[i], self.subtitle[i], self.name[i], self.clss[i]))
     
                 file.write(f'\\begin{{questions}}\n')
 
-#                file.write(f'\\begin{{multicols}}{{2}}\n')
-    
-                for j in range(0,10,2):
-
-                    if correction[j+5]:
-                       file.write(f'\question Question {j+1}.')
-                       file.write(r'\begin{itemize}')
-                       file.write(f'\item You choose the alternative {correction[j+5]}.')
-                       file.write(f'\item You got {correction[j+6]} points.')
-                       file.write(f'\item Considerations: ')
-                       file.write(r'\end{itemize}')
-
-#                file.write(f'\\end{{multicols}}\n')
+                if self.choice_1[i]:
+                   file.write(f'\question Question 1.')
+                   file.write(r'\begin{itemize}')
+                   file.write(f'\item You chose the alternative {self.choice_1[i]}.')
+                   file.write(f'\item You got {self.result_1[i]} points.')
+                   file.write(f'\item Considerations: ')
+                   file.write(r'\end{itemize}')
 
                 file.write(f'\\end{{questions}}\n')
 
@@ -474,6 +496,20 @@ class Result():
       
             os.system(f'pdflatex -halt-on-error -output-directory result result/{output}.tex')
             os.system(f'rm result/{output}.aux result/{output}.log')
+
+    def send_mail(self):
+
+        mail_body = """
+        Test email
+        """
+
+        mail_subject = 'teste'
+
+        for email in self.email:
+
+            print('Sending mail to {}...'.format(email))
+            email_function(mail_subject, mail_body, email)
+            print('OK')
 
     def delete(self, id):
 
@@ -502,3 +538,18 @@ def evaluate(var, option):
     feedback = point_list[indx]
 
     return feedback
+
+def email_function(mail_subject, mail_body, mail_to):
+
+    msg = email.message.Message()
+    msg['Subject'] = mail_subject
+    msg['From'] = 'flavianowilliams@gmail.com'
+    msg['To'] = mail_to
+    password = 'epyauccqvbscutmr'
+    msg.add_header('Content-Type', 'text/html')
+    msg.set_payload(mail_body)
+
+    s = smtplib.SMTP('smtp.gmail.com: 587')
+    s.starttls()
+    s.login(msg['From'], password)
+    s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
