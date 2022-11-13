@@ -291,7 +291,7 @@ class Test():
             DELETE FROM test WHERE rowid='{id}'
         """)
 
-    def make_exam(self, clss):
+    def generate_PDF(self, clss):
 
         cur = self.con.cursor()
 
@@ -403,27 +403,25 @@ class Result():
 
         cur = self.con.cursor()
 
-        for i in range(len(self.code)):
+        for option in option_list:
 
-            for item in option_list:
+            indx = self.code.index(option['code'])
 
-                if item['code'] == self.code[i]:
+            lst = option['choice']
 
-                    lst = item['choice']
+            feedback_list = [evaluate(self.point_1[indx], lst[0])]
+            feedback_list.append(evaluate(self.point_2[indx], lst[1]))
+            feedback_list.append(evaluate(self.point_3[indx], lst[2]))
+            feedback_list.append(evaluate(self.point_4[indx], lst[3]))
+            feedback_list.append(evaluate(self.point_5[indx], lst[4]))
 
-            feedback_list = [evaluate(self.point_1[i], lst[0])]
-            feedback_list.append(evaluate(self.point_2[i], lst[1]))
-            feedback_list.append(evaluate(self.point_3[i], lst[2]))
-            feedback_list.append(evaluate(self.point_4[i], lst[3]))
-            feedback_list.append(evaluate(self.point_5[i], lst[4]))
-
-            self.choice = [item for item in option_list[i]['choice']]
+            self.choice = [item for item in option['choice']]
 
             cur.execute(f"""
                 INSERT INTO correction VALUES(
                     '{date.today()}',
                     '{date.today()}',
-                    '{self.test[i]}',
+                    '{self.test[indx]}',
                     '{self.choice[0]}',
                     '{feedback_list[0]}',
                     '{self.choice[1]}',
@@ -437,13 +435,13 @@ class Result():
                     )
                 """)
 
-    def rendering(self):
+    def generate_PDF(self):
 
         cur = self.con.cursor()
 
         res = cur.execute(f"""
             SELECT correction.choice_1, correction.choice_2, correction.choice_3, correction.choice_4, correction.choice_5, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5
-            FROM test, correction
+            FROM test, correction, student
             WHERE class = '{self.clss[0]}'
             AND correction.fk_test = test.ROWID;
         """)
@@ -502,7 +500,7 @@ class Result():
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT correction.choice_1, correction.choice_2, correction.choice_3, correction.choice_4, correction.choice_5, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5
+            SELECT correction.choice_1, correction.choice_2, correction.choice_3, correction.choice_4, correction.choice_5, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5, test.ROWID
             FROM test, correction
             WHERE class = '{self.clss[0]}'
             AND correction.fk_test = test.ROWID;
@@ -516,19 +514,25 @@ class Result():
         self.choice_4 = [item[3] for item in list]
         self.choice_5 = [item[4] for item in list]
 
-        self.result_1 = [item[5] for item in list]
-        self.result_2 = [item[6] for item in list]
-        self.result_3 = [item[7] for item in list]
-        self.result_4 = [item[8] for item in list]
-        self.result_5 = [item[9] for item in list]
+        self.result_1 = [float(item[5]) for item in list]
+        self.result_2 = [float(item[6]) for item in list]
+        self.result_3 = [float(item[7]) for item in list]
+        self.result_4 = [float(item[8]) for item in list]
+        self.result_5 = [float(item[9]) for item in list]
+   
+        test_list = [item[10] for item in list]
 
-        for i in range(len(self.email)):
+        self.result = [float(item[5])+float(item[6])+float(item[7])+float(item[8])+float(item[9]) for item in list]
 
-            mail_subject = f"{self.title[i]}"
+        for i in range(len(test_list)):
+
+            indx = self.test.index(test_list[i])
+
+            mail_subject = f"{self.title[indx]}"
 
             mail_body = f"""
-                <p>Avaliação: <strong>{self.title[i]} - {self.subtitle[i]}</strong></p>
-                <p>Aluno: {self.name[i]}</p>
+                <p>Avaliação: <strong>{self.title[indx]} - {self.subtitle[indx]}</strong></p>
+                <p>Aluno: {self.name[indx]}</p>
 
             """
 
@@ -536,7 +540,7 @@ class Result():
                 mail_body = mail_body+f"""
                 <p>Questão 1</p>
                 <ul>
-                    <li> Alternativa escolhida: {self.choice_1[1]};
+                    <li> Alternativa escolhida: {self.choice_1[i]};
                     <li> Pontos obtidos na questão: {self.result_1[i]}.
                 </ul>
             """
@@ -545,7 +549,7 @@ class Result():
                 mail_body = mail_body+f"""
                 <p>Questão 2</p>
                 <ul>
-                    <li> Alternativa escolhida: {self.choice_2[1]};
+                    <li> Alternativa escolhida: {self.choice_2[i]};
                     <li> Pontos obtidos na questão: {self.result_2[i]}.
                 </ul>
             """
@@ -554,7 +558,7 @@ class Result():
                 mail_body = mail_body+f"""
                 <p>Questão 3</p>
                 <ul>
-                    <li> Alternativa escolhida: {self.choice_3[1]};
+                    <li> Alternativa escolhida: {self.choice_3[i]};
                     <li> Pontos obtidos na questão: {self.result_3[i]}.
                 </ul>
             """
@@ -563,7 +567,7 @@ class Result():
                 mail_body = mail_body+f"""
                 <p>Questão 4</p>
                 <ul>
-                    <li> Alternativa escolhida: {self.choice_4[1]};
+                    <li> Alternativa escolhida: {self.choice_4[i]};
                     <li> Pontos obtidos na questão: {self.result_4[i]}.
                 </ul>
             """
@@ -572,15 +576,19 @@ class Result():
                 mail_body = mail_body+f"""
                 <p>Questão 5</p>
                 <ul>
-                    <li> Alternativa escolhida: {self.choice_5[1]};
+                    <li> Alternativa escolhida: {self.choice_5[i]};
                     <li> Pontos obtidos na questão: {self.result_5[i]}.
                 </ul>
             """
 
+            mail_body = mail_body+f"""
+            <p> Total de pontos obtidos: <strong>{self.result[i]} pontos</strong>.</p>
+            """
+
             mail_body = mail_body+r"<em>Este email foi gerado automaticamente pelo programa gerador de testes DBQuaest. Para mais informações, acesse o <a href='https://github.com/flavianowilliams/DBQuaest'>Readme</a> no repositório do GitHub.</em>"
 
-            print('Sending mail to {}...'.format(self.email[i]))
-            email_function(mail_subject, mail_body, self.email[i])
+            print('Sending mail to {}...'.format(self.email[indx]))
+            email_function(mail_subject, mail_body, self.email[indx])
             print('OK')
 
     def delete(self):
