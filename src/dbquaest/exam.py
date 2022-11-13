@@ -528,13 +528,13 @@ class Result():
 
             mail_body = f"""
                 <p>Avaliação: <strong>{self.title[i]} - {self.subtitle[i]}</strong></p>
-                <p>Aluno: <emph>{self.name[i]}</emph></p>
+                <p>Aluno: {self.name[i]}</p>
 
             """
 
             if self.choice_1[i]:
                 mail_body = mail_body+f"""
-                <p>1. Questão\n</p>
+                <p>Questão 1</p>
                 <ul>
                     <li> Alternativa escolhida: {self.choice_1[1]};
                     <li> Pontos obtidos na questão: {self.result_1[i]}.
@@ -543,7 +543,7 @@ class Result():
 
             if self.choice_2[i]:
                 mail_body = mail_body+f"""
-                <p>1. Questão\n</p>
+                <p>Questão 2</p>
                 <ul>
                     <li> Alternativa escolhida: {self.choice_2[1]};
                     <li> Pontos obtidos na questão: {self.result_2[i]}.
@@ -552,7 +552,7 @@ class Result():
 
             if self.choice_3[i]:
                 mail_body = mail_body+f"""
-                <p>1. Questão\n</p>
+                <p>Questão 3</p>
                 <ul>
                     <li> Alternativa escolhida: {self.choice_3[1]};
                     <li> Pontos obtidos na questão: {self.result_3[i]}.
@@ -561,7 +561,7 @@ class Result():
 
             if self.choice_4[i]:
                 mail_body = mail_body+f"""
-                <p>1. Questão\n</p>
+                <p>Questão 4</p>
                 <ul>
                     <li> Alternativa escolhida: {self.choice_4[1]};
                     <li> Pontos obtidos na questão: {self.result_4[i]}.
@@ -570,14 +570,14 @@ class Result():
 
             if self.choice_5[i]:
                 mail_body = mail_body+f"""
-                <p>1. Questão\n</p>
+                <p>Questão 5</p>
                 <ul>
                     <li> Alternativa escolhida: {self.choice_5[1]};
                     <li> Pontos obtidos na questão: {self.result_5[i]}.
                 </ul>
             """
 
-            mail_body = mail_body+r"Este email foi gerado automaticamente pelo programa gerador de testes DBQuaest. Para mais informações, acesse o <a href='https://github.com/flavianowilliams/DBQuaest'>Readme</a> no repositório do GitHub."
+            mail_body = mail_body+r"<em>Este email foi gerado automaticamente pelo programa gerador de testes DBQuaest. Para mais informações, acesse o <a href='https://github.com/flavianowilliams/DBQuaest'>Readme</a> no repositório do GitHub.</em>"
 
             print('Sending mail to {}...'.format(self.email[i]))
             email_function(mail_subject, mail_body, self.email[i])
