@@ -417,22 +417,22 @@ class Result():
             feedback_list.append(evaluate(self.point_4[i], lst[3]))
             feedback_list.append(evaluate(self.point_5[i], lst[4]))
 
-            choice = [item for item in option_list[i]['choice']]
+            self.choice = [item for item in option_list[i]['choice']]
 
             cur.execute(f"""
                 INSERT INTO correction VALUES(
                     '{date.today()}',
                     '{date.today()}',
                     '{self.test[i]}',
-                    '{choice[0]}',
+                    '{self.choice[0]}',
                     '{feedback_list[0]}',
-                    '{choice[1]}',
+                    '{self.choice[1]}',
                     '{feedback_list[1]}',
-                    '{choice[2]}',
+                    '{self.choice[2]}',
                     '{feedback_list[2]}',
-                    '{choice[3]}',
+                    '{self.choice[3]}',
                     '{feedback_list[3]}',
-                    '{choice[4]}',
+                    '{self.choice[4]}',
                     '{feedback_list[4]}'
                     )
                 """)
@@ -499,27 +499,99 @@ class Result():
 
     def send_mail(self):
 
-        mail_body = """
-        Test email
-        """
+        cur = self.con.cursor()
 
-        mail_subject = 'teste'
+        res = cur.execute(f"""
+            SELECT correction.choice_1, correction.choice_2, correction.choice_3, correction.choice_4, correction.choice_5, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5
+            FROM test, correction
+            WHERE class = '{self.clss[0]}'
+            AND correction.fk_test = test.ROWID;
+        """)
 
-        for email in self.email:
+        list = res.fetchall()
 
-            print('Sending mail to {}...'.format(email))
-            email_function(mail_subject, mail_body, email)
+        self.choice_1 = [item[0] for item in list]
+        self.choice_2 = [item[1] for item in list]
+        self.choice_3 = [item[2] for item in list]
+        self.choice_4 = [item[3] for item in list]
+        self.choice_5 = [item[4] for item in list]
+
+        self.result_1 = [item[5] for item in list]
+        self.result_2 = [item[6] for item in list]
+        self.result_3 = [item[7] for item in list]
+        self.result_4 = [item[8] for item in list]
+        self.result_5 = [item[9] for item in list]
+
+        for i in range(len(self.email)):
+
+            mail_subject = f"{self.title[i]}"
+
+            mail_body = f"""
+                <p>Avaliação: <strong>{self.title[i]} - {self.subtitle[i]}</strong></p>
+                <p>Aluno: <emph>{self.name[i]}</emph></p>
+
+            """
+
+            if self.choice_1[i]:
+                mail_body = mail_body+f"""
+                <p>1. Questão\n</p>
+                <ul>
+                    <li> Alternativa escolhida: {self.choice_1[1]};
+                    <li> Pontos obtidos na questão: {self.result_1[i]}.
+                </ul>
+            """
+
+            if self.choice_2[i]:
+                mail_body = mail_body+f"""
+                <p>1. Questão\n</p>
+                <ul>
+                    <li> Alternativa escolhida: {self.choice_2[1]};
+                    <li> Pontos obtidos na questão: {self.result_2[i]}.
+                </ul>
+            """
+
+            if self.choice_3[i]:
+                mail_body = mail_body+f"""
+                <p>1. Questão\n</p>
+                <ul>
+                    <li> Alternativa escolhida: {self.choice_3[1]};
+                    <li> Pontos obtidos na questão: {self.result_3[i]}.
+                </ul>
+            """
+
+            if self.choice_4[i]:
+                mail_body = mail_body+f"""
+                <p>1. Questão\n</p>
+                <ul>
+                    <li> Alternativa escolhida: {self.choice_4[1]};
+                    <li> Pontos obtidos na questão: {self.result_4[i]}.
+                </ul>
+            """
+
+            if self.choice_5[i]:
+                mail_body = mail_body+f"""
+                <p>1. Questão\n</p>
+                <ul>
+                    <li> Alternativa escolhida: {self.choice_5[1]};
+                    <li> Pontos obtidos na questão: {self.result_5[i]}.
+                </ul>
+            """
+
+            mail_body = mail_body+r"Este email foi gerado automaticamente pelo programa gerador de testes DBQuaest. Para mais informações, acesse o <a href='https://github.com/flavianowilliams/DBQuaest'>Readme</a> no repositório do GitHub."
+
+            print('Sending mail to {}...'.format(self.email[i]))
+            email_function(mail_subject, mail_body, self.email[i])
             print('OK')
 
-    def delete(self, id):
+    def delete(self):
 
         cur = self.con.cursor()
 
-        cur.execute(f"""
-            DELETE FROM correction WHERE rowid='{id}'
-        """)
+        for test in self.test:
+            cur.execute(f"""
+                DELETE FROM correction WHERE fk_test='{test}';
+            """)
 
     def save(self):
 
         self.con.commit()
-        self.con.close()
