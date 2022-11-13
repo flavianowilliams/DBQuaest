@@ -62,6 +62,7 @@ def make_database():
         cur.execute(r"""CREATE TABLE student(
             created date NOT NULL,
             updated date NOT NULL,
+            register varchar(13) NOT NULL UNIQUE,
             name varchar(255) NOT NULL,
             email varchar(255) DEFAULT NULL,
             telephone varchar(255) DEFAULT NULL
@@ -141,10 +142,18 @@ class Student():
 
         cur = self.con.cursor()
 
+        res = cur.execute(f"""
+            SELECT ROWID FROM student
+        """)
+
+        model_list = res.fetchall()
+        register = str(len(model_list)+1)
+
         cur.execute(f"""
             INSERT INTO student VALUES(
                 '{date.today()}',
                 '{date.today()}',
+                '{register}',
                 '{std['name']}',
                 '{std['email']}',
                 '{std['telephone']}'
