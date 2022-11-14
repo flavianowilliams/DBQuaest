@@ -3,7 +3,7 @@ import os
 from datetime import date
 from dbquaest.utils import email_function, evaluate
 from dbquaest.settings import BASE_DIR, MODULES
-from dbquaest.tex import template, template_figure, template_document
+from dbquaest.tex import template, template_figure, template_document, template_report
 
 ######################################################################################################
 # criando base de dados SQL
@@ -388,7 +388,7 @@ class Result():
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT test.class, test.code, test.ROWID, test.point_1, test.point_2, test.point_3, test.point_4, test.point_5, student.name, student.email, model.title, model.subtitle
+            SELECT test.date, test.class, test.code, test.ROWID, test.point_1, test.point_2, test.point_3, test.point_4, test.point_5, student.name, student.email, model.title, model.subtitle
             FROM test, student, model
             WHERE class = '{clss_input}'
             AND test.fk_model = model.ROWID
@@ -397,20 +397,21 @@ class Result():
 
         list = res.fetchall()
 
-        self.clss = [item[0] for item in list]
-        self.code = [item[1] for item in list]
-        self.test = [item[2] for item in list]
+        self.var_date = [item[0] for item in list]
+        self.clss = [item[1] for item in list]
+        self.code = [item[2] for item in list]
+        self.test = [item[3] for item in list]
 
-        self.point_1 = [item[3] for item in list]
-        self.point_2 = [item[4] for item in list]
-        self.point_3 = [item[5] for item in list]
-        self.point_4 = [item[6] for item in list]
-        self.point_5 = [item[7] for item in list]
+        self.point_1 = [item[4] for item in list]
+        self.point_2 = [item[5] for item in list]
+        self.point_3 = [item[6] for item in list]
+        self.point_4 = [item[7] for item in list]
+        self.point_5 = [item[8] for item in list]
 
-        self.name = [item[8] for item in list]
-        self.email = [item[9] for item in list]
-        self.title = [item[10] for item in list]
-        self.subtitle = [item[11] for item in list]
+        self.name = [item[9] for item in list]
+        self.email = [item[10] for item in list]
+        self.title = [item[11] for item in list]
+        self.subtitle = [item[12] for item in list]
 
     def create(self,option_list):
 
@@ -508,12 +509,76 @@ class Result():
             os.system(f'pdflatex -halt-on-error -output-directory result result/{output}.tex')
             os.system(f'rm result/{output}.aux result/{output}.log')
 
+    def make_report(self):
+
+        cur = self.con.cursor()
+
+        res = cur.execute(f"""
+            SELECT test.ROWID, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5
+            FROM test, correction
+            WHERE class = '{self.clss[0]}'
+            AND correction.fk_test = test.ROWID;
+        """)
+
+        list = res.fetchall()
+
+        test_list = [item[0] for item in list]
+
+        result_1 = [item[1] for item in list]
+        result_2 = [item[2] for item in list]
+        result_3 = [item[3] for item in list]
+        result_4 = [item[4] for item in list]
+        result_5 = [item[5] for item in list]
+
+        result = [float(item[1])+float(item[2])+float(item[3])+float(item[4])+float(item[5]) for item in list]
+
+        with open(f'report.tex', 'w') as file:
+
+            tmplt = template()
+
+            file.write(tmplt)
+
+            file.write(r'\begin{document}'+'\n')
+
+            file.write(template_report(self.title[0], self.subtitle[0], self.clss[0], self.var_date[0]))
+    
+            file.write(r'\begin{table}[h!]'+'\n')
+
+            file.write(r'\centering'+'\n')
+
+            file.write(r'\begin{tabular}{lccccccc}'+'\n')
+
+            file.write(r'\hline'+'\n')
+
+            file.write(r'Student & Code & Q. 1 & Q. 2 & Q. 3 & Q. 4 & Q. 5 & Total\\'+'\n')
+
+            file.write(r'\hline'+'\n')
+
+            for i in range(len(test_list)):
+
+                indx = self.test.index(test_list[i])
+
+                file.write(f'{self.name[indx]} & {self.code[indx]} & {result_1[i]} & {result_2[i]} & {result_3[i]} & {result_4[i]} & {result_5[i]} & {result[i]}\\\\')
+
+            file.write(r'\hline'+'\n')
+
+            file.write(r'\end{tabular}'+'\n')
+
+            file.write(r'\end{table}'+'\n')
+
+            file.write(f'\\end{{document}}')
+
+            file.close()
+      
+            os.system(f'pdflatex report.tex')
+            os.system(f'rm report.aux report.log')
+
     def send_mail(self):
 
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT correction.choice_1, correction.choice_2, correction.choice_3, correction.choice_4, correction.choice_5, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5, test.ROWID
+            SELECT correction.choice_1, correction.choice_2, correction.choice_3, correction.choice_4, correction.choice_5, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5, test.ROWID, test.date
             FROM test, correction
             WHERE class = '{self.clss[0]}'
             AND correction.fk_test = test.ROWID;
@@ -545,6 +610,7 @@ class Result():
 
             mail_body = f"""
                 <p>Avaliação: <strong>{self.title[indx]} - {self.subtitle[indx]}</strong></p>
+                <p>Data: {self.var_date[indx]}</p>
                 <p>Aluno: {self.name[indx]}</p>
 
             """

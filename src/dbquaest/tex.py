@@ -54,7 +54,7 @@ def template_document(code, title, subtitle, name, clss, var_date):
         \\end{{flushright}}
     \\end{{minipage}}
     \\vspace{{0.5cm}} \\hrule \\vspace{{0.5cm}}
-    \\begin{{minipage}}{{0.55\linewidth}}
+    \\begin{{minipage}}{{0.50\linewidth}}
         \\begin{{flushleft}}
             Student: {name}
         \\end{{flushleft}}
@@ -65,6 +65,32 @@ def template_document(code, title, subtitle, name, clss, var_date):
         \\end{{center}}
     \\end{{minipage}}
     \\begin{{minipage}}{{0.20\linewidth}}
+        \\begin{{flushright}}
+            Class: {clss}
+        \\end{{flushright}}
+    \\end{{minipage}}
+    \\vspace{{0.5cm}} \\hrule \\vspace{{0.5cm}}
+    """
+    return template
+
+def template_report(title, subtitle, clss, var_date):
+
+    template = f"""
+    \\begin{{minipage}}[b]{{0.75\linewidth}}
+        \\begin{{flushleft}}
+            {{\\bf \large {title}}}
+        \\end{{flushleft}}
+        \\begin{{flushleft}}
+            {{\\bf \large {subtitle}}}
+        \\end{{flushleft}}
+    \\end{{minipage}}
+    \\vspace{{0.5cm}} \\hrule \\vspace{{0.5cm}}
+    \\begin{{minipage}}{{0.70\linewidth}}
+        \\begin{{flushleft}}
+            Date: {var_date}
+        \\end{{flushleft}}
+    \\end{{minipage}}
+    \\begin{{minipage}}{{0.25\linewidth}}
         \\begin{{flushright}}
             Class: {clss}
         \\end{{flushright}}
