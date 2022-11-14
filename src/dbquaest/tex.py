@@ -37,7 +37,7 @@ def template_figure(figure):
 
     return template
 
-def template_document(code, title, subtitle, name, clss):
+def template_document(code, title, subtitle, name, clss, var_date):
 
     template = f"""
     \\begin{{minipage}}[b]{{0.75\linewidth}}
@@ -54,10 +54,15 @@ def template_document(code, title, subtitle, name, clss):
         \\end{{flushright}}
     \\end{{minipage}}
     \\vspace{{0.5cm}} \\hrule \\vspace{{0.5cm}}
-    \\begin{{minipage}}{{0.75\linewidth}}
+    \\begin{{minipage}}{{0.55\linewidth}}
         \\begin{{flushleft}}
             Student: {name}
         \\end{{flushleft}}
+    \\end{{minipage}}
+    \\begin{{minipage}}{{0.20\linewidth}}
+        \\begin{{center}}
+            Date: {var_date}
+        \\end{{center}}
     \\end{{minipage}}
     \\begin{{minipage}}{{0.20\linewidth}}
         \\begin{{flushright}}

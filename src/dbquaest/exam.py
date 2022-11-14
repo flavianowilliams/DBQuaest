@@ -36,6 +36,7 @@ def make_database():
         cur.execute(r"""CREATE TABLE test(
             created date NOT NULL,
             updated date NOT NULL,
+            date date NOT NULL,
             fk_model integer NOT NULL,
             fk_student integer NOT NULL,
             class varchar(25) NOT NULL,
@@ -171,11 +172,13 @@ class Student():
 
 class Test():
 
-    def __init__(self):
+    def __init__(self, clss):
 
         self.con = sqlite3.connect("dbquaest.sqlite3")
 
-    def create(self, model, std, clss):
+        self.clss = clss
+
+    def create(self, model, std, var_date):
 
         ntest = len(std)
 
@@ -269,9 +272,10 @@ class Test():
                 INSERT INTO test VALUES (
                     '{date.today()}',
                     '{date.today()}',
+                    '{var_date}',
                     '{model}',
                     '{std_data[i]}',
-                    '{clss}',
+                    '{self.clss}',
                     '{i}',
                     '{type}',
                     '{data_txt[0]}',
@@ -300,22 +304,22 @@ class Test():
             DELETE FROM test WHERE rowid='{id}'
         """)
 
-    def generate_PDF(self, clss):
+    def generate_PDF(self):
 
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT model.title, model.subtitle, student.name, test.class, test.code, test.text_1, test.figure_1, test.text_2, test.figure_2, test.text_3, test.figure_3, test.text_4, test.figure_4, test.text_5, test.figure_5
+            SELECT model.title, model.subtitle, student.name, test.date, test.code, test.text_1, test.figure_1, test.text_2, test.figure_2, test.text_3, test.figure_3, test.text_4, test.figure_4, test.text_5, test.figure_5
             FROM((test
             INNER JOIN student ON test.fk_student = student.ROWID)
             INNER JOIN model ON test.fk_model = model.ROWID)
-            WHERE class = '{clss}'
+            WHERE class = '{self.clss}'
         """)
 
         model_list = res.fetchall()
 
         res = cur.execute(f"""
-            SELECT COUNT(*) FROM test WHERE class = '{clss}'
+            SELECT COUNT(*) FROM test WHERE class = '{self.clss}'
         """)
 
         ntest = res.fetchone()
@@ -324,7 +328,6 @@ class Test():
 
         title = model_list[0][0]
         subtitle = model_list[0][1]
-        clss = model_list[0][3]
 
         with open('main.tex', 'w') as file:
 
@@ -336,9 +339,10 @@ class Test():
 
             for i in range(0,ntest):
                 name = model_list[i][2]
+                var_date = model_list[i][3]
                 code = model_list[i][4]
 
-                file.write(template_document(code, title, subtitle, name, clss))
+                file.write(template_document(code, title, subtitle, name, self.clss, var_date))
     #
                 file.write(f'\\begin{{questions}}\n')
     #
