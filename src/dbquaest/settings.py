@@ -18,3 +18,7 @@ MODULES = [
     uncertainty_principle,
     schrodinger_equation
     ]
+
+# define database directory
+
+DB_DIR = '/home/flaviano/Dropbox/IFPR/ensino/atividades/'

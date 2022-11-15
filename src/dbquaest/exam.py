@@ -1,91 +1,8 @@
-import sqlite3
-import os
+import sqlite3, os
 from datetime import date
-from dbquaest.utils import email_function, evaluate
-from dbquaest.settings import BASE_DIR, MODULES
+from dbquaest.utils import email_function, eval_float, eval_string
+from dbquaest.settings import BASE_DIR, MODULES, DB_DIR
 from dbquaest.tex import template, template_figure, template_document, template_report
-
-######################################################################################################
-# criando base de dados SQL
-######################################################################################################
-
-def make_database():
-
-    database = os.path.exists('dbquaest.sqlite3')
-
-    con = sqlite3.connect("dbquaest.sqlite3")
-    cur = con.cursor()
-
-    if bool(database) == False:
-        cur.execute(r"""CREATE TABLE model(
-            title varchar(255) NOT NULL,
-            subtitle varchar(255) NOT NULL,
-            created date NOT NULL,
-            updated date NOT NULL,
-            code_1 varchar(8),
-            point_1 decimal,
-            code_2 varchar(8),
-            point_2 decimal,
-            code_3 varchar(8),
-            point_3 decimal,
-            code_4 varchar(8),
-            point_4 decimal,
-            code_5 varchar(8),
-            point_5 decimal
-            )""")
-        cur.execute(r"""CREATE TABLE test(
-            created date NOT NULL,
-            updated date NOT NULL,
-            date date NOT NULL,
-            fk_model integer NOT NULL,
-            fk_student integer NOT NULL,
-            class varchar(25) NOT NULL,
-            code integer NOT NULL,
-            type varchar(10),
-            text_1 varchar,
-            figure_1 varchar(10),
-            point_1 decimal,
-            text_2 varchar DEFAULT NULL,
-            figure_2 varchar(10) DEFAULT NULL,
-            point_2 decimal DEFAULT NULL,
-            text_3 varchar DEFAULT NULL,
-            figure_3 varchar(10) DEFAULT NULL,
-            point_3 decimal DEFAULT NULL,
-            text_4 varchar DEFAULT NULL,
-            figure_4 varchar(10) DEFAULT NULL,
-            point_4 decimal DEFAULT NULL,
-            text_5 varchar DEFAULT NULL,
-            figure_5 varchar(10) DEFAULT NULL,
-            point_5 decimal DEFAULT NULL,
-            FOREIGN KEY (fk_model) REFERENCES model(ROWID),
-            FOREIGN KEY (fk_student) REFERENCES student(ROWID)
-            )""")
-        cur.execute(r"""CREATE TABLE student(
-            created date NOT NULL,
-            updated date NOT NULL,
-            register varchar(13) NOT NULL UNIQUE,
-            name varchar(255) NOT NULL,
-            email varchar(255) DEFAULT NULL,
-            telephone varchar(255) DEFAULT NULL
-            )""")
-        cur.execute(r"""CREATE TABLE correction(
-            created date NOT NULL,
-            updated date NOT NULL,
-            fk_test integer NOT NULL,
-            choice_1 varchar(1) DEFAULT NULL,
-            point_1 DEFAULT NULL,
-            choice_2 varchar(1) DEFAULT NULL,
-            point_2 DEFAULT NULL,
-            choice_3 varchar(1) DEFAULT NULL,
-            point_3 DEFAULT NULL,
-            choice_4 varchar(1) DEFAULT NULL,
-            point_4 DEFAULT NULL,
-            choice_5 varchar(1) DEFAULT NULL,
-            point_5 DEFAULT NULL,
-            FOREIGN KEY (fk_test) REFERENCES test(ROWID)
-            )""")
-    else:
-        print('The database already exists')
 
 ######################################################################################################
 # classe Modelo
@@ -95,7 +12,7 @@ class Model():
 
     def __init__(self):
 
-        self.con = sqlite3.connect("dbquaest.sqlite3")
+        self.con = sqlite3.connect(DB_DIR+"dbquaest.sqlite3")
 
     def create(self, title, subtitle, questions):
 
@@ -104,16 +21,18 @@ class Model():
         question_list = list()
         code_list = list()
 
-        for item_1, item_2 in questions:
-            question_list.append(item_1)
-            code_list.append(item_2)
+        nquest = len(questions)
 
-        for item in range(len(questions),5):
-            question_list.append('')
-            code_list.append(0)
+        for item_1, item_2 in questions:
+            question_list.append(f'\'{item_1}\'')
+            code_list.append(f'\'{item_2}\'')
+
+        for item in range(nquest,5):
+            question_list.append('NULL')
+            code_list.append('NULL')
 
         cur.execute(f"""
-            INSERT INTO model VALUES ('{title}', '{subtitle}', '{date.today()}', '{date.today()}', '{question_list[0]}', '{code_list[0]}', '{question_list[1]}', '{code_list[1]}', '{question_list[2]}', '{code_list[2]}', '{question_list[3]}', '{code_list[3]}', '{question_list[4]}', '{code_list[4]}')
+            INSERT INTO model VALUES ('{title}', '{subtitle}', '{date.today()}', '{date.today()}', '{nquest}', {question_list[0]}, {code_list[0]}, {question_list[1]}, {code_list[1]}, {question_list[2]}, {code_list[2]}, {question_list[3]}, {code_list[3]}, {question_list[4]}, {code_list[4]})
         """)
 
     def delete(self, title, subtitle):
@@ -137,7 +56,7 @@ class Student():
 
     def __init__(self):
 
-        self.con = sqlite3.connect("dbquaest.sqlite3")
+        self.con = sqlite3.connect(DB_DIR+"dbquaest.sqlite3")
 
     def create(self, std):
 
@@ -149,6 +68,7 @@ class Student():
 
         model_list = res.fetchall()
         register = str(len(model_list)+1)
+        std['name'] = std['name'].upper()
 
         cur.execute(f"""
             INSERT INTO student VALUES(
@@ -174,7 +94,7 @@ class Test():
 
     def __init__(self, clss):
 
-        self.con = sqlite3.connect("dbquaest.sqlite3")
+        self.con = sqlite3.connect(DB_DIR+"dbquaest.sqlite3")
 
         self.clss = clss
 
@@ -182,10 +102,12 @@ class Test():
 
         ntest = len(std)
 
+        std = [item.upper() for item in std]
+
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT code_1, point_1, code_2, point_2, code_3, point_3, code_4, point_4, code_5, point_5
+            SELECT questions, code_1, point_1, code_2, point_2, code_3, point_3, code_4, point_4, code_5, point_5
             FROM model
             WHERE ROWID = {model};
         """)
@@ -205,15 +127,15 @@ class Test():
             std_data.append(var[0])
 
         question_list = []
-        for i in range(0,10,2):
-            if model_list[i] != '':
-                question_list.append({'code': model_list[i], 'point': model_list[i+1]})
+        for i in range(0,model_list[0]):
+            question_list.append({'code': model_list[2*i+1], 'point': model_list[2*i+2]})
 
         for i in range(ntest):
 
             data_txt = []
             data_figure = []
             data_point = []
+            data_consideration = []
 
             for code in question_list:
 
@@ -229,6 +151,7 @@ class Test():
                 alternatives = quest['alternative']
 
                 point = []
+                consideration = []
 
                 if figure:
                     fig = template_figure(figure)
@@ -241,9 +164,11 @@ class Test():
 
                     for alternative in alternatives:
                         point.append(round(alternative['point'],1))
+                        cons = str(alternative['consideration'])
+                        consideration.append(cons)
                         choice = format(choice+'\choice '+alternative["choice"]+' '+unit+'\n')
 
-                    txt = f"\\question {text}\n\n{choice}\\end{{choices}}\n"
+                    txt = f"\'\\question[{code['point']}] {text}\n\n{choice}\\end{{choices}}\n\'"
 
                 elif type == 'objective':
 
@@ -251,22 +176,28 @@ class Test():
 
                     for alternative in alternatives:
                         point.append(alternative['point'])
+                        cons = str(alternative['consideration'])
+                        consideration.append(cons)
                         key = alternative['choice']
                         if abs(key) < 1.e-2 or key > 1.e+3:
                             choice = f"{choice}\\choice {key:.1e} {unit}"
+                            choice = choice.replace('.', ',')
                         else:
                             choice = f"{choice}\\choice {key:7.3f} {unit}"
+                            choice = choice.replace('.', ',')
 
-                    txt = f"\\question {text}\n{fig}\n{choice}\n\\end{{oneparchoices}}"
+                    txt = f"\'\\question[{code['point']}] {text}\n{fig}\n{choice}\n\\end{{oneparchoices}}\'"
 
                 data_txt.append(txt)
-                data_figure.append(figure)
-                data_point.append(point)
+                data_figure.append(f"\'{figure}\'")
+                data_point.append(f"\'{point}\'")
+                data_consideration.append(f'\"{consideration}\"')
 
             for j in range(len(question_list),5):
-                data_txt.append('')
-                data_figure.append('')
-                data_point.append('')
+                data_txt.append('NULL')
+                data_figure.append('NULL')
+                data_point.append('NULL')
+                data_consideration.append('NULL')
 
             cur.execute(f"""
                 INSERT INTO test VALUES (
@@ -278,30 +209,35 @@ class Test():
                     '{self.clss}',
                     '{i}',
                     '{type}',
-                    '{data_txt[0]}',
-                    '{data_figure[0]}',
-                    '{data_point[0]}',
-                    '{data_txt[1]}',
-                    '{data_figure[1]}',
-                    '{data_point[1]}',
-                    '{data_txt[2]}',
-                    '{data_figure[2]}',
-                    '{data_point[2]}',
-                    '{data_txt[3]}',
-                    '{data_figure[3]}',
-                    '{data_point[3]}',
-                    '{data_txt[4]}',
-                    '{data_figure[4]}',
-                    '{data_point[4]}'
+                    {data_txt[0]},
+                    {data_figure[0]},
+                    {data_point[0]},
+                    {data_consideration[0]},
+                    {data_txt[1]},
+                    {data_figure[1]},
+                    {data_point[1]},
+                    {data_consideration[1]},
+                    {data_txt[2]},
+                    {data_figure[2]},
+                    {data_point[2]},
+                    {data_consideration[2]},
+                    {data_txt[3]},
+                    {data_figure[3]},
+                    {data_point[3]},
+                    {data_consideration[3]},
+                    {data_txt[4]},
+                    {data_figure[4]},
+                    {data_point[4]},
+                    {data_consideration[4]}
                     )
             """)
 
-    def delete(self, id):
+    def delete(self):
 
         cur = self.con.cursor()
 
         cur.execute(f"""
-            DELETE FROM test WHERE rowid='{id}'
+            DELETE FROM test WHERE class='{self.clss}'
         """)
 
     def generate_PDF(self):
@@ -350,12 +286,13 @@ class Test():
     #
                 for j in range(0,10,2):
                     txt = model_list[i][j+5]
-                    figure = model_list[i][j+6]
+                    if txt:
+                        figure = model_list[i][j+6]
 
-                    if figure:
-                        os.system(f"cp {BASE_DIR}/src/dbquaest/img/{figure}.jpg .")
+                        if figure:
+                            os.system(f"cp {BASE_DIR}/src/dbquaest/img/{figure}.jpg .")
 
-                    file.write(txt)
+                        file.write(txt)
 
                 file.write(f'\\end{{multicols*}}\n')
 
@@ -383,12 +320,12 @@ class Result():
 
     def __init__(self, clss_input):
 
-        self.con = sqlite3.connect("dbquaest.sqlite3")
+        self.con = sqlite3.connect(DB_DIR+"dbquaest.sqlite3")
 
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT test.date, test.class, test.code, test.ROWID, test.point_1, test.point_2, test.point_3, test.point_4, test.point_5, student.name, student.email, model.title, model.subtitle
+            SELECT test.date, test.class, test.code, test.ROWID, test.point_1, test.point_2, test.point_3, test.point_4, test.point_5, test.consideration_1, test.consideration_2, test.consideration_3, test.consideration_4, test.consideration_5, student.name, student.email, model.title, model.subtitle
             FROM test, student, model
             WHERE class = '{clss_input}'
             AND test.fk_model = model.ROWID
@@ -408,10 +345,16 @@ class Result():
         self.point_4 = [item[7] for item in list]
         self.point_5 = [item[8] for item in list]
 
-        self.name = [item[9] for item in list]
-        self.email = [item[10] for item in list]
-        self.title = [item[11] for item in list]
-        self.subtitle = [item[12] for item in list]
+        self.cons_1 = [item[9] for item in list]
+        self.cons_2 = [item[10] for item in list]
+        self.cons_3 = [item[11] for item in list]
+        self.cons_4 = [item[12] for item in list]
+        self.cons_5 = [item[13] for item in list]
+
+        self.name = [item[14] for item in list]
+        self.email = [item[15] for item in list]
+        self.title = [item[16] for item in list]
+        self.subtitle = [item[17] for item in list]
 
     def create(self,option_list):
 
@@ -423,29 +366,64 @@ class Result():
 
             lst = option['choice']
 
-            feedback_list = [evaluate(self.point_1[indx], lst[0])]
-            feedback_list.append(evaluate(self.point_2[indx], lst[1]))
-            feedback_list.append(evaluate(self.point_3[indx], lst[2]))
-            feedback_list.append(evaluate(self.point_4[indx], lst[3]))
-            feedback_list.append(evaluate(self.point_5[indx], lst[4]))
+            feedback_list = [eval_float(self.point_1[indx], lst[0])]
+            fback_cons = [eval_string(self.cons_1[indx], lst[0])]
 
-            self.choice = [item for item in option['choice']]
+            if bool(self.point_2[indx]) != False:
+                feedback_list.append(eval_float(self.point_2[indx], lst[1]))
+                fback_cons.append(eval_string(self.cons_2[indx], lst[1]))
+            else:
+                feedback_list.append('NULL')
+                fback_cons.append('NULL')
+
+            if bool(self.point_3[indx]) != False:
+                feedback_list.append(eval_float(self.point_3[indx], lst[2]))
+                fback_cons.append(eval_string(self.cons_3[indx], lst[2]))
+            else:
+                feedback_list.append('NULL')
+                fback_cons.append('NULL')
+
+            if bool(self.point_4[indx]) != False:
+                feedback_list.append(eval_float(self.point_4[indx], lst[3]))
+                fback_cons.append(eval_string(self.cons_4[indx], lst[3]))
+            else:
+                feedback_list.append('NULL')
+                fback_cons.append('NULL')
+
+            if bool(self.point_5[indx]) != False:
+                feedback_list.append(eval_float(self.point_5[indx], lst[4]))
+                fback_cons.append(eval_string(self.cons_5[indx], lst[4]))
+            else:
+                feedback_list.append('NULL')
+                fback_cons.append('NULL')
+
+            self.chk = [f'\'{item}\'' for item in option['choice']]
+
+            nx = len(option['choice'])
+
+            for i in range(nx, 5):
+                self.chk.append('NULL')
 
             cur.execute(f"""
                 INSERT INTO correction VALUES(
                     '{date.today()}',
                     '{date.today()}',
                     '{self.test[indx]}',
-                    '{self.choice[0]}',
-                    '{feedback_list[0]}',
-                    '{self.choice[1]}',
-                    '{feedback_list[1]}',
-                    '{self.choice[2]}',
-                    '{feedback_list[2]}',
-                    '{self.choice[3]}',
-                    '{feedback_list[3]}',
-                    '{self.choice[4]}',
-                    '{feedback_list[4]}'
+                    {self.chk[0]},
+                    {feedback_list[0]},
+                    {fback_cons[0]},
+                    {self.chk[1]},
+                    {feedback_list[1]},
+                    {fback_cons[1]},
+                    {self.chk[2]},
+                    {feedback_list[2]},
+                    {fback_cons[2]},
+                    {self.chk[3]},
+                    {feedback_list[3]},
+                    {fback_cons[3]},
+                    {self.chk[4]},
+                    {feedback_list[4]},
+                    {fback_cons[4]}
                     )
                 """)
 
@@ -530,7 +508,7 @@ class Result():
         result_4 = [item[4] for item in list]
         result_5 = [item[5] for item in list]
 
-        result = [float(item[1])+float(item[2])+float(item[3])+float(item[4])+float(item[5]) for item in list]
+        result = [sum(item) for item in list if item is not None]
 
         with open(f'report.tex', 'w') as file:
 
@@ -682,3 +660,4 @@ class Result():
     def save(self):
 
         self.con.commit()
+        self.con.close()

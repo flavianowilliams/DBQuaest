@@ -1,4 +1,6 @@
 import random
+from random import choice
+from dbquaest.utils import random_vars
 
 def question(qpoint, opt):
 
@@ -10,51 +12,48 @@ def question(qpoint, opt):
         p1 = (200, 400, 'g') # min, max, unidade
         p2 = (20, 60, 'N/m') # min, max, unidade
 
-        p1_list = [p1[0]+(p1[1]-p1[0])*0.1*(i+1) for i in range(10)]
-        p2_list = [p2[0]+(p2[1]-p2[0])*0.1*(i+1) for i in range(10)]
+        value_1 = random_vars(p1, 10)
+        value_2 = random_vars(p2, 10)
 
-        alt_list = [{'choice': value_1*60/1.6e-19, 'point': qpoint}]
-#        alt_list.append({'choice': value_1/1.6e-19, 'point': 0.75*qpoint})
-#        alt_list.append({'choice': value_1*60*1.6e-19, 'point': 0.50*qpoint})
-#        alt_list.append({'choice': value_1*1.6e-19, 'point': 0.50*qpoint})
+        i0 = choice([i for i in range(10)])
 
-        text = f"""Um objeto de massa {value_1:7.2f} {p1[2]} percorre um ﬁo de cobre. Sabendo-se que a carga de um elétron é igual a $1,6\\times 10^{{-19}}\;C$, qual é o número de elétrons que atravessa, por minuto, a seção reta desse ﬁo?"""
+        alt_list = [{
+            'choice': value_1[i0]*(1.e-3)*10/value_2[i0],
+            'consideration': 'Alternativa correta',
+            'point': qpoint
+            }]
 
-        figure = ''
+        alt_list.append({
+            'choice': value_1[i0]*10/value_2[i0],
+            'consideration': 'Errou em converter a unidade grama para quilograma',
+            'point': 0.75*qpoint
+            })
 
-        unit = ''
+        alt_list.append({
+            'choice': value_1[i0]*(1.e-3)/value_2[i0],
+            'consideration': 'Não considerou a aceleração da gravidade',
+            'point': 0.5*qpoint
+            })
 
-        for i in range(6):
-            value_1 = random.uniform(p1[0], p1[1])*1.e+19
-            alt_list.append({'choice': value_1, 'point': 0.0})
+        alt_list.append({
+            'choice': value_2[i0]*(1.e-3)*10/value_1[i0],
+            'consideration': 'Errou em definir a fórmula do período',
+            'point': 0.0
+            })
 
-        indx = random.sample(range(0,10),10)
-
-        alternative_list = [alt_list[u] for u in indx]
-
-        context = {'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
-
-    elif opt == 'OPWMHS001':
-
-        type = 'objective'
-
-        p1 = [1.0, 5.0, 'A'] # min, max
-        value_1 = random.uniform(p1[0], p1[1])
-        alt_list = [{'choice': 120*value_1, 'point': qpoint}]
-        alt_list.append({'choice': 120*value_1**2, 'point': 0.0})
-        alt_list.append({'choice': 120/value_1, 'point': 0.0})
-        alt_list.append({'choice': value_1/120, 'point': 0.0})
-
-        text = f"""Uma diferença de potencial de 120 V é aplicada a uma bomba d’água. Sabe-se que em funcionamento, o motor da bomba é percorrido por uma corrente de {value_1:7.2f} {p1[2]}. Qual é a potência desenvolvida nesse motor?"""
+        text = f"""Um objeto de massa {value_1[i0]:7.2f} {p1[2]} executa um movimento harmônico simples preso à extremidade de uma mola, cuja constante elástica é de {value_2[i0]:7.2f} {p2[2]}. Qual deve ser o comprimento de um pêndulo simples para que ele oscile com um período igual ao do objeto preso à mola?"""
 
         figure = ''
 
-        unit = 'W'
+        unit = 'm'
 
-        error = [0, 36000] # min, max
-        for i in range(6):
-            value_1 = random.uniform(error[0], error[1])
-            alt_list.append({'choice': value_1, 'point': 0.0})
+        for i in range(10):
+            if i not in [i0]:
+                alt_list.append({
+                    'choice': value_1[i],
+                    'consideration': 'Alternativa errada',
+                    'point': 0.0
+                    })
 
         indx = random.sample(range(0,10),10)
 
