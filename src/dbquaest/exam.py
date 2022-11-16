@@ -140,7 +140,7 @@ class Test():
             for code in question_list:
 
                 for module in MODULES:
-                    item = module.question(code['point'], code['code'])
+                    item = module.question(code['point'], code['code'], ntest)
                     if bool(item) == True:
                         quest = item
 
@@ -259,7 +259,6 @@ class Test():
         """)
 
         ntest = res.fetchone()
-
         ntest = ntest[0]
 
         title = model_list[0][0]

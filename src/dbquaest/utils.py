@@ -19,7 +19,7 @@ def random_vars(input, ntest):
 
     list = [input[0]+(input[1]-input[0])*(i+1)/ntest for i in range(ntest)]
 
-    indx = random.sample(range(0,10),10)
+    indx = random.sample(range(0,ntest),ntest)
 
     output_list = [list[u] for u in indx]
 

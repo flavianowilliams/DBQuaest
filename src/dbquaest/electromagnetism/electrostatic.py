@@ -1,6 +1,6 @@
 import random
 
-def question(qpoint, opt):
+def question(qpoint, opt, ntest):
 
     if opt == 'CEELE001':
 

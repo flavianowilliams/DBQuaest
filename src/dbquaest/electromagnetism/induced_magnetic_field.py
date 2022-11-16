@@ -1,7 +1,7 @@
 from math import cos, sin
 import random
 
-def question(qpoint, opt):
+def question(qpoint, opt, ntest):
 
     if opt == 'OEIMF001':
 
