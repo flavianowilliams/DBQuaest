@@ -140,7 +140,7 @@ class Test():
             for code in question_list:
 
                 for module in MODULES:
-                    item = module.question(code['point'], code['code'], ntest)
+                    item = module.question(code['point'], code['code'], max(ntest,10))
                     if bool(item) == True:
                         quest = item
 
