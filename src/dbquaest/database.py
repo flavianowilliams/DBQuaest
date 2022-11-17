@@ -1,4 +1,3 @@
-import os
 import sqlite3
 from sqlite3 import Error
 from dbquaest.settings import DB_DIR
@@ -24,17 +23,29 @@ def make_database():
             created date NOT NULL,
             updated date NOT NULL,
             questions integer NOT NULL,
-            code_1 varchar(8),
+            constants DEFAULT NULL,
+            module_1 varchar(255),
+            submodule_1 varchar(255),
+            code_1 varchar(3),
             point_1 decimal DEFAULT 0,
-            code_2 varchar(8),
+            module_2 varchar(255),
+            submodule_2 varchar(255),
+            code_2 varchar(3),
             point_2 decimal DEFAULT 0,
-            code_3 varchar(8),
+            module_3 varchar(255),
+            submodule_3 varchar(255),
+            code_3 varchar(3),
             point_3 decimal DEFAULT 0,
-            code_4 varchar(8),
+            module_4 varchar(255),
+            submodule_4 varchar(255),
+            code_4 varchar(3),
             point_4 decimal DEFAULT 0,
-            code_5 varchar(8),
+            module_5 varchar(255),
+            submodule_5 varchar(255),
+            code_5 varchar(3),
             point_5 decimal DEFAULT 0
             )""")
+
         cur.execute(r"""CREATE TABLE test(
             created date NOT NULL,
             updated date NOT NULL,
@@ -67,6 +78,7 @@ def make_database():
             FOREIGN KEY (fk_model) REFERENCES model(ROWID),
             FOREIGN KEY (fk_student) REFERENCES student(ROWID)
             )""")
+
         cur.execute(r"""CREATE TABLE student(
             created date NOT NULL,
             updated date NOT NULL,
@@ -75,6 +87,7 @@ def make_database():
             email varchar(255) DEFAULT NULL,
             telephone varchar(255) DEFAULT NULL
             )""")
+
         cur.execute(r"""CREATE TABLE correction(
             created date NOT NULL,
             updated date NOT NULL,

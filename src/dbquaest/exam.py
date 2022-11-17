@@ -18,21 +18,31 @@ class Model():
 
         cur = self.con.cursor()
 
-        question_list = list()
-        code_list = list()
-
         nquest = len(questions)
 
-        for item_1, item_2 in questions:
-            question_list.append(f'\'{item_1}\'')
-            code_list.append(f'\'{item_2}\'')
+        module_list = []
+        submodule_list = []
+        code_list = []
+        point_list = []
+
+        for item in questions:
+            var1 = item['module']
+            var2 = item['submodule']
+            var3 = item['code']
+            var4 = item['point']
+            module_list.append(f'\"{var1}\"')
+            submodule_list.append(f'\"{var2}\"')
+            code_list.append(f'\"{var3}\"')
+            point_list.append(f'\"{var4}\"')
 
         for item in range(nquest,5):
-            question_list.append('NULL')
+            module_list.append('NULL')
+            submodule_list.append('NULL')
             code_list.append('NULL')
+            point_list.append('NULL')
 
         cur.execute(f"""
-            INSERT INTO model VALUES ('{title}', '{subtitle}', '{date.today()}', '{date.today()}', '{nquest}', {question_list[0]}, {code_list[0]}, {question_list[1]}, {code_list[1]}, {question_list[2]}, {code_list[2]}, {question_list[3]}, {code_list[3]}, {question_list[4]}, {code_list[4]})
+            INSERT INTO model VALUES ('{title}', '{subtitle}', '{date.today()}', '{date.today()}', '{nquest}', '0', {module_list[0]}, {submodule_list[0]}, {code_list[0]}, {point_list[0]}, {module_list[1]}, {submodule_list[1]}, {code_list[1]}, {point_list[1]}, {module_list[2]}, {submodule_list[2]}, {code_list[2]}, {point_list[2]}, {module_list[3]}, {submodule_list[3]}, {code_list[3]}, {point_list[3]}, {module_list[4]}, {submodule_list[4]}, {code_list[4]}, {point_list[4]})
         """)
 
     def delete(self, title, subtitle):
@@ -107,7 +117,7 @@ class Test():
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT questions, code_1, point_1, code_2, point_2, code_3, point_3, code_4, point_4, code_5, point_5
+            SELECT questions, module_1, submodule_1, code_1, point_1, module_2, submodule_2, code_2, point_2, module_3, submodule_3, code_3, point_3, module_4, submodule_4, code_4, point_4, module_5, submodule_5, code_5, point_5
             FROM model
             WHERE ROWID = {model};
         """)
@@ -128,7 +138,12 @@ class Test():
 
         question_list = []
         for i in range(0,model_list[0]):
-            question_list.append({'code': model_list[2*i+1], 'point': model_list[2*i+2]})
+            question_list.append({
+                'module': model_list[4*i+1],
+                'submodule': model_list[4*i+2],
+                'code': model_list[4*i+3],
+                'point': model_list[4*i+4]
+                })
 
         for i in range(ntest):
 
@@ -139,10 +154,9 @@ class Test():
 
             for code in question_list:
 
-                for module in MODULES:
-                    item = module.question(code['point'], code['code'], max(ntest,10))
-                    if bool(item) == True:
-                        quest = item
+                for module in MODULES:                   
+                    if module.__name__ == f"dbquaest.{code['module']}.{code['submodule']}":
+                        quest = module.question(code['point'], code['code'], max(ntest,10))
 
                 text = quest['text']
                 figure = quest['figure']
@@ -297,6 +311,9 @@ class Test():
 
                 file.write(f'\\end{{questions}}\n')
 
+                file.write(r'\begin{minipage}')
+                file.write(r'\end{minipage}')
+
                 file.write(f'\\newpage\n')
 
             file.write(f'\\end{{document}}')
@@ -310,6 +327,64 @@ class Test():
 
         self.con.commit()
         self.con.close()
+
+class Test2():
+
+    def __init__(self, clss):
+
+        self.con = sqlite3.connect(DB_DIR+"dbquaest.sqlite3")
+
+        self.clss = clss
+
+    def create(self, model, std, var_date):
+
+        ntest = len(std)
+
+        std = [item.upper() for item in std]
+
+        cur = self.con.cursor()
+
+        res = cur.execute(f"""
+            SELECT questions, module_1, submodule_1, code_1, point_1, module_2, submodule_2, code_2, point_2, module_3, submodule_3, code_3, point_3, module_4, submodule_4, code_4, point_4, module_5, submodule_5, code_5, point_5
+            FROM model
+            WHERE ROWID = {model};
+        """)
+
+        model_list = res.fetchone()
+
+        std_data = []
+
+        for name in std:
+            res = cur.execute(f"""
+                SELECT ROWID
+                FROM student
+                WHERE name = '{name}';
+            """)
+
+            var = res.fetchone()
+            std_data.append(var[0])
+
+        question_list = []
+        for i in range(0,model_list[0]):
+            question_list.append({
+                'module': model_list[3*i+1],
+                'submodule': model_list[3*i+2],
+                'code': model_list[3*i+3],
+                'point': model_list[3*i+4]
+                })
+
+        for i in range(ntest):
+
+            data_txt = []
+            data_figure = []
+            data_point = []
+            data_consideration = []
+
+            for code in question_list:
+
+                for module in MODULES:                   
+                    if module.__name__ == f"dbquaest.{code['module']}.{code['submodule']}":
+                        quest = module.question(code['point'], code['code'], max(ntest,10))
 
 ######################################################################################################
 # classe Resultado

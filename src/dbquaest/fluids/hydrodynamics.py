@@ -5,7 +5,7 @@ from math import pi
 
 def question(qpoint, opt, ntest):
 
-    if opt == 'OPFHYD001':
+    if opt == '001':
 
         type = 'objective'
 
