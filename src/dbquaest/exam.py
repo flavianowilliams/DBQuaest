@@ -91,6 +91,14 @@ class Student():
                 )
             """)
 
+    def delete(self, name):
+
+        cur = self.con.cursor()
+
+        cur.execute(f"""
+            DELETE FROM studento WHERE name = '{name}'
+        """)
+
     def save(self):
 
         self.con.commit()
