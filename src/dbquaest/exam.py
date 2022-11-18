@@ -218,7 +218,7 @@ class Test():
                         consideration.append(cons)
                         key = alternative['choice']
                         if abs(key) < 1.e-2 or key > 1.e+3:
-                            choice = f"{choice}\\choice {key:.1e} {unit}"
+                            choice = f"{choice}\\choice \\num{{{key:.1e}}} {unit}"
                             choice = choice.replace('.', ',')
                         else:
                             choice = f"{choice}\\choice {key:7.3f} {unit}"

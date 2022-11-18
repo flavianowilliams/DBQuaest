@@ -14,6 +14,7 @@ def template():
 \usepackage{tkz-fct}
 \usepackage{tkz-euclide}
 \usepackage[a4paper, portrait, margin=2cm]{geometry}
+\usepackage[output-decimal-marker={,}]{siunitx}
 
 \usetikzlibrary{arrows,3d,calc,automata,positioning,shadows,math,fit,shapes}
 \usetikzlibrary{patterns,hobby,optics,calc}
