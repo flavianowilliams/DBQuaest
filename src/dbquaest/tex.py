@@ -29,8 +29,8 @@ def template_figure(figure):
 
     template = f"""
 \\begin{{center}}
-    \\begin{{minipage}}\[c\]{{0.50\linewidth}}
-        \\includegraphics[width=\textwidth]{{{figure}.jpg}}
+    \\begin{{minipage}}[c]{{\linewidth}}
+        \\includegraphics[width=\\textwidth]{{{figure}.jpg}}
     \\end{{minipage}}
 \\end{{center}}
 """

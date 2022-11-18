@@ -325,10 +325,8 @@ class Test():
                 formulas = model_list[i][6]
 
                 constants_list = string_format(constants)
-#                constants_list = constants.split(',')
 
                 formula_list = string_format(formulas)
-#                formula_list = formulas.split(',')
 
                 file.write(template_document(code, title, subtitle, name, self.clss, var_date))
     #

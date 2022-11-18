@@ -150,7 +150,7 @@ def question(qpoint, opt, ntest):
             'point': 0.0
             })
 
-        figure = ''
+        figure = 'fluids_hydrostatic_002'
 
         unit = 'kg'
 
