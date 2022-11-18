@@ -47,8 +47,6 @@ def eval_string(var, option):
     var = var.replace('[', '').replace(']', '')
     var = var.split(',')
 
-#    point_list = [float(u) for u in var]
-
     indx = alphabet_list.index(option)
 
     feedback = var[indx]

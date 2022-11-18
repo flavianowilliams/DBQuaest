@@ -1,128 +1,186 @@
 import random
+from random import choice
+from dbquaest.utils import random_vars
+from dbquaest.constants import cte
 
 def question(qpoint, opt, ntest):
 
-    if opt == 'OQPWD001':
+    # constants
+
+    h = cte('Planck constant (eV)')
+    h_value = h['value']
+
+    h2 = cte('Planck constant')
+    h2_value = h2['value']
+
+    c = cte('speed of light')
+    c_value = c['value']
+
+    cte_list = [
+        f"{h['symbol']}={h['value']} {h['unit']}",
+        f"{h2['symbol']}={h2['value']} {h2['unit']}",
+        f"{c['symbol']}={c['value']} {c['unit']}"
+    ]
+
+    formula_list = []
+
+    if opt == '001':
 
         type = 'objective'
 
-        p1 = [2.28, 2.28, 'eV'] # Work function of Sodium
-        p2 = [4.1357e-15, 4.1357e-15, 'eV*s'] # Planck constant
-        p3 = [299792458, 299792458, 'm/s'] # speed of light
-        p4 = [200, 540, 'nm']
+        p1 = (2.28, 2.28, 'eV') # Work function of Sodium
+        p2 = (200, 540, 'nm')
 
-        var = random.uniform(p4[0], p4[1])
+        value_1 = random_vars(p1, ntest)
+        value_2 = random_vars(p2, ntest)
+
+        i0 = choice([i for i in range(10)])
+
+        text = f"""A função trabalho do sódio é {value_1[i0]:7.2f} {p1[2]}, determine a energia cinética dos elétrons que são emitidos desse material quando ele é bombardeado por radiação com comprimento de onda de {value_2[i0]:7.2f} {p2[2]}."""
 
         alt_list = [{
-            'choice': p2[0]*p3[0]/(var*1.e-9)-p1[0],
+            'choice': h_value*c_value/(value_2[i0]*1.e-9)-value_1[i0],
+            'consideration': 'Alternativa correta',
             'point': qpoint
             }]
 
         alt_list.append({
-            'choice': p2[0]*p3[0]/var-p1[0],
+            'choice': h_value*c_value/(value_2[i0]*1.e-9)-value_1[i0],
+            'consideration': 'Errou em converter a unidade nanometro para metro',
             'point': 0.75*qpoint
             })
 
         alt_list.append({
-            'choice': p2[0]*var*1.e-9-p1[0],
-            'point': 0.25*qpoint
+            'choice': h_value*c_value/(value_2[i0]*1.e-9)+value_1[i0],
+            'consideration': 'Errou em definir a equação do efeito fotoelétrico',
+            'point': 0.0*qpoint
             })
 
         alt_list.append({
-            'choice': p2[0]*p3[0]/(var*1.e-9)+p1[0],
-            'point': 0.25*qpoint
+            'choice': h_value*c_value*(value_2[i0]*1.e-9)-value_1[i0],
+            'consideration': 'Errou em definir a expressão da velocidade da luz',
+            'point': 0.0*qpoint
             })
 
-        text = f"""A função trabalho do sódio é 2,28 eV, determine a energia cinética dos elétrons que são emitidos desse material quando ele é bombardeado por radiação com comprimento de onda de {var:7.2f} {p4[2]}."""
+        alt_list.append({
+            'choice': h_value*(value_2[i0]*1.e-9)-value_1[i0],
+            'consideration': 'Utilizou o comprimento de onda ao invés da frequência na equação do efeito fotoelétrico',
+            'point': 0.0*qpoint
+            })
+
+        alt_list.append({
+            'choice': h_value*c_value/(value_2[i0]*1.e-9),
+            'consideration': 'Não considerou a função trabalho na equação do efeito fotoelétrico',
+            'point': 0.0*qpoint
+            })
 
         figure = ''
 
         unit = 'eV'
 
-        for i in range(6):
-            error = random.uniform(p4[0], p4[1])
-            alt_list.append({'choice': p2[0]*p3[0]/(error*1.e-9)-p1[0], 'point': 0.0})
+        for i in range(ntest):
+            if i not in [i0]:
+                val = h_value*c_value/(value_2[i]*1.e-9)-value_1[i]
+                minx_list = [abs(val-item['choice']) for item in alt_list]
+                if min(minx_list) >= 0.01:
+                    alt_list.append({
+                        'choice': val,
+                        'consideration': 'Alternativa errada',
+                        'point': 0.0
+                        })
 
         indx = random.sample(range(0,10),10)
 
         alternative_list = [alt_list[u] for u in indx]
 
-        context = {'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
-    elif opt == 'OQPWD002':
+    elif opt == '002':
 
         type = 'objective'
 
-        p1 = [6.62607015e-34, 6.62607015e-34, '$kg\cdot m^2/s$'] # Planck constant
-        p2 = [100, 200, 'g']
-        p3 = [80, 200, 'km/h']
+        p1 = [100, 200, 'g']
+        p2 = [80, 200, 'km/h']
 
-        var_1 = random.uniform(p2[0], p2[1])
-        var_2 = random.uniform(p3[0], p3[1])
+        value_1 = random_vars(p1, ntest)
+        value_2 = random_vars(p2, ntest)
+
+        i0 = choice([i for i in range(10)])
+
+#        var_1 = random.uniform(p2[0], p2[1])
+#        var_2 = random.uniform(p3[0], p3[1])
+
+        text = f"""Calcule o comprimento de onda de uma bola de basebol que possui uma massa de {value_1[i0]:7.2f} {p1[2]} a uma velocidade de {value_2[i0]:7.2f} {p2[2]}. Seria possível observar os efeitos da física quântica nesse caso?"""
 
         alt_list = [{
-            'choice': 6.62607015e-34/((var_1*1.0e-3)*(var_2/3.6)),
+            'choice': h2_value*1.e9/((value_1[i0]*1.0e-3)*(value_2[i0]/3.6)),
+            'consideration': 'Alternativa correta',
             'point': qpoint
             }]
 
         alt_list.append({
-            'choice': 6.62607015e-34/((var_1)*(var_2/3.6)),
+            'choice': h2_value/((value_1[i0]*1.0e-3)*(value_2[i0]/3.6)),
+            'consideration': 'Errou em converter a unidade metro para nanometro',
             'point': 0.75*qpoint
             })
 
         alt_list.append({
-            'choice': 6.62607015e-34/((var_1*1.0e-3)*(var_2)),
+            'choice': h2_value*1.e9/((value_1[i0])*(value_2[i0]/3.6)),
+            'consideration': 'Errou em converter a unidade grama para quilograma',
             'point': 0.75*qpoint
             })
 
         alt_list.append({
-            'choice': 6.62607015e-34/(var_1*var_2),
+            'choice': h2_value*1.e9/((value_1[i0]*1.0e-3)*(value_2[i0])),
+            'consideration': 'Errou em converter a unidade km/h para m/s',
+            'point': 0.75*qpoint
+            })
+
+        alt_list.append({
+            'choice': h2_value*1.e9/(value_1[i0]*value_2[i0]),
+            'consideration': 'Errou em converter as unidades km/h para m/s e grama para quilograma',
             'point': 0.5*qpoint
             })
 
         alt_list.append({
-            'choice': 6.62607015e-34/((var_1*1.0e+3)*(var_2/3.6)),
+            'choice': h2_value*1.e9/((value_1[i0]*1.0e+3)*(value_2[i0]/3.6)),
+            'consideration': 'Errou em converter a unidade grama para quilograma',
             'point': 0.75
             })
 
         alt_list.append({
-            'choice': 6.62607015e-34/((var_1*1.0e-3)*(var_2*3.6)),
+            'choice': h2_value*1.e9/((value_1[i0]*1.0e-3)*(value_2[i0]*3.6)),
+            'consideration': 'Errou em converter a unidade km/h para m/s',
             'point': 0.75
             })
 
         alt_list.append({
-            'choice': 6.62607015e-34/((var_1*1.0e+3)*(var_2*3.6)),
+            'choice': h2_value*1.e9/((value_1[i0]*1.0e+3)*(value_2[i0]*3.6)),
+            'consideration': 'Errou em converter as unidades km/h para m/s e grama para quilograma',
             'point': 0.5
             })
 
         alt_list.append({
-            'choice': 6.62607015e-34/((var_2/3.6)),
+            'choice': h2_value*1.e9/((value_2[i0]/3.6)),
+            'consideration': 'Não incluiu a massa na expressão de de Broglie',
             'point': 0.0
             })
 
         alt_list.append({
-            'choice': 6.62607015e-34*((var_1*1.0e-3)*(var_2/3.6)),
+            'choice': h2_value*1.e9*((value_1[i0]*1.0e-3)*(value_2[i0]/3.6)),
+            'consideration': 'Errou em definir a expressão de de Broglie',
             'point': 0.0
             })
-
-        text = f"""Calcule o comprimento de onda de uma bola de basebol que possui uma massa de {var_1:7.2f} {p2[2]} a uma velocidade de {var_2:7.2f} {p3[2]}. Seria possível observar os efeitos da física quântica nesse caso?"""
 
         figure = ''
 
         unit = 'nm'
 
-        error_1 = random.uniform(p2[0], p2[1])
-        error_2 = random.uniform(p3[0], p3[1])
-        alt_list.append({
-            'choice': 6.62607015e-34/((error_1*1.0e-3)*(error_2/3.6)),
-            'point': 0.0
-            })
-
         indx = random.sample(range(0,10),10)
 
         alternative_list = [alt_list[u] for u in indx]
 
-        context = {'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
     else:
 

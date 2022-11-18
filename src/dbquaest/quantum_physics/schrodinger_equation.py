@@ -2,32 +2,43 @@ import random
 
 def question(qpoint, opt, ntest):
 
-    if opt == 'CQSCH001':
+    # constants
+
+    cte_list = []
+
+    formula_list = []
+
+    if opt == '001':
 
         type = 'conceptual'
 
         alt_list = [{
             'choice': '$E=\\frac{\hbar^2k^2}{2m}$',
+            'consideration': 'Alternativa correta',
             'point': qpoint
             }]
 
         alt_list.append({
             'choice': '$E=\infty$',
+            'consideration': 'Alternativa errada',
             'point': 0.0
             })
 
         alt_list.append({
             'choice': '$E = \\frac{mk^2}{2}$',
+            'consideration': 'Alternativa errada',
             'point': 0.0
             })
 
         alt_list.append({
             'choice': '$E=\hbar k$',
+            'consideration': 'Alternativa errada',
             'point': 0.0
             })
 
         alt_list.append({
             'choice': '$E = \\frac{mk^2}{2}$',
+            'consideration': 'Alternativa errada',
             'point': 0.0
             })
 
@@ -41,7 +52,7 @@ def question(qpoint, opt, ntest):
 
         alternative_list = [alt_list[u] for u in indx]
 
-        context = {'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
     else:
 

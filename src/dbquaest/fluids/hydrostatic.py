@@ -12,9 +12,14 @@ def question(qpoint, opt, ntest):
     g_value = g['value']
 
     dens = cte('water density')
-    dens_value = g['value']
+    dens_value = dens['value']
 
-    cte_list = [g, dens]
+    cte_list = [
+        f"{g['symbol']}={g['value']} {g['unit']}",
+        f"{dens['symbol']}={dens['value']} {dens['unit']}"
+        ]
+
+    formula_list = []
 
     if opt == '001':
 
@@ -86,7 +91,7 @@ def question(qpoint, opt, ntest):
 
         alternative_list = [alt_list[u] for u in indx]
 
-        context = {'constants': cte_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
     elif opt == '002':
 
@@ -164,7 +169,7 @@ def question(qpoint, opt, ntest):
 
         alternative_list = [alt_list[u] for u in indx]
 
-        context = {'constants': cte_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
     else:
 
