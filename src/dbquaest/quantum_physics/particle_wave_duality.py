@@ -33,7 +33,7 @@ def question(qpoint, opt, ntest):
         type = 'objective'
 
         p1 = (2.28, 2.28, 'eV') # Work function of Sodium
-        p2 = (200, 540, 'nm')
+        p2 = (100, 540, 'nm')
 
         value_1 = random_vars(p1, ntest)
         value_2 = random_vars(p2, ntest)
@@ -49,7 +49,7 @@ def question(qpoint, opt, ntest):
             }]
 
         alt_list.append({
-            'choice': h_value*c_value/(value_2[i0]*1.e-9)-value_1[i0],
+            'choice': h_value*c_value/(value_2[i0])-value_1[i0],
             'consideration': 'Errou em converter a unidade nanometro para metro',
             'point': 0.75*qpoint
             })
@@ -57,25 +57,25 @@ def question(qpoint, opt, ntest):
         alt_list.append({
             'choice': h_value*c_value/(value_2[i0]*1.e-9)+value_1[i0],
             'consideration': 'Errou em definir a equação do efeito fotoelétrico',
-            'point': 0.0*qpoint
+            'point': 0.0
             })
 
         alt_list.append({
             'choice': h_value*c_value*(value_2[i0]*1.e-9)-value_1[i0],
             'consideration': 'Errou em definir a expressão da velocidade da luz',
-            'point': 0.0*qpoint
+            'point': 0.0
             })
 
         alt_list.append({
             'choice': h_value*(value_2[i0]*1.e-9)-value_1[i0],
             'consideration': 'Utilizou o comprimento de onda ao invés da frequência na equação do efeito fotoelétrico',
-            'point': 0.0*qpoint
+            'point': 0.0
             })
 
         alt_list.append({
             'choice': h_value*c_value/(value_2[i0]*1.e-9),
             'consideration': 'Não considerou a função trabalho na equação do efeito fotoelétrico',
-            'point': 0.0*qpoint
+            'point': 0.0
             })
 
         figure = ''
@@ -83,7 +83,7 @@ def question(qpoint, opt, ntest):
         unit = 'eV'
 
         for i in range(ntest):
-            if i not in [i0]:
+            if i != i0:
                 val = h_value*c_value/(value_2[i]*1.e-9)-value_1[i]
                 minx_list = [abs(val-item['choice']) for item in alt_list]
                 if min(minx_list) >= 0.01:
