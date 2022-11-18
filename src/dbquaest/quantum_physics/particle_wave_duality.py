@@ -22,7 +22,11 @@ def question(qpoint, opt, ntest):
         f"{c['symbol']}={c['value']} {c['unit']}"
     ]
 
-    formula_list = []
+    formula_list = [
+        '$\lambda=\frac{h}{p}$',
+        '$E=h\nu$',
+        '$eV=h\nu-\phi$'
+    ]
 
     if opt == '001':
 

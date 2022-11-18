@@ -22,6 +22,7 @@ def make_database():
             subtitle varchar(255) NOT NULL,
             created date NOT NULL,
             updated date NOT NULL,
+            description varchar DEFAULT NULL,
             questions integer NOT NULL,
             module_1 varchar(255),
             submodule_1 varchar(255),

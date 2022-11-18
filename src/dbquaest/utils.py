@@ -21,7 +21,7 @@ def random_vars(input, ntest):
 
     indx = random.sample(range(0,ntest),ntest)
 
-    output_list = [list[u] for u in indx]
+    output_list = [round(list[u],2) for u in indx]
 
     return output_list
     
@@ -52,3 +52,12 @@ def eval_string(var, option):
     feedback = var[indx]
 
     return feedback
+
+def string_format(string):
+
+    string = string.replace('[', '').replace(']', '').replace('\cdot', 'cdot')
+    string = string.replace('x0c','f').replace('\lambda', 'lambda').replace('\phi','phi')
+
+    list = string.split(',')
+
+    return list

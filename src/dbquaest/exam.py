@@ -1,6 +1,6 @@
 import sqlite3, os
 from datetime import date
-from dbquaest.utils import email_function, eval_float, eval_string
+from dbquaest.utils import email_function, eval_float, eval_string, string_format
 from dbquaest.settings import BASE_DIR, MODULES, DB_DIR
 from dbquaest.tex import template, template_figure, template_document, template_report
 
@@ -14,7 +14,7 @@ class Model():
 
         self.con = sqlite3.connect(DB_DIR+"dbquaest.sqlite3")
 
-    def create(self, title, subtitle, questions):
+    def create(self, title, subtitle, description, questions):
 
         cur = self.con.cursor()
 
@@ -42,7 +42,7 @@ class Model():
             point_list.append('NULL')
 
         cur.execute(f"""
-            INSERT INTO model VALUES ('{title}', '{subtitle}', '{date.today()}', '{date.today()}', '{nquest}', {module_list[0]}, {submodule_list[0]}, {code_list[0]}, {point_list[0]}, {module_list[1]}, {submodule_list[1]}, {code_list[1]}, {point_list[1]}, {module_list[2]}, {submodule_list[2]}, {code_list[2]}, {point_list[2]}, {module_list[3]}, {submodule_list[3]}, {code_list[3]}, {point_list[3]}, {module_list[4]}, {submodule_list[4]}, {code_list[4]}, {point_list[4]})
+            INSERT INTO model VALUES ('{title}', '{subtitle}', '{date.today()}', '{date.today()}', '{description}', '{nquest}', {module_list[0]}, {submodule_list[0]}, {code_list[0]}, {point_list[0]}, {module_list[1]}, {submodule_list[1]}, {code_list[1]}, {point_list[1]}, {module_list[2]}, {submodule_list[2]}, {code_list[2]}, {point_list[2]}, {module_list[3]}, {submodule_list[3]}, {code_list[3]}, {point_list[3]}, {module_list[4]}, {submodule_list[4]}, {code_list[4]}, {point_list[4]})
         """)
 
     def delete(self, title, subtitle):
@@ -316,11 +316,11 @@ class Test():
                 constants = model_list[i][5]
                 formulas = model_list[i][6]
 
-                constants = constants.replace('[', '').replace(']', '')
-                constants_list = constants.split(',')
+                constants_list = string_format(constants)
+#                constants_list = constants.split(',')
 
-                formulas = formulas.replace('[', '').replace(']', '')
-                formula_list = formulas.split(',')
+                formula_list = string_format(formulas)
+#                formula_list = formulas.split(',')
 
                 file.write(template_document(code, title, subtitle, name, self.clss, var_date))
     #
