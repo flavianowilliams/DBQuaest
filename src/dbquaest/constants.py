@@ -11,6 +11,4 @@ def cte(input):
 
     value = list(filter(lambda u: u['type'] == input, constants_list))
 
-    value = value[0]
-
-    return value
+    return value[0]

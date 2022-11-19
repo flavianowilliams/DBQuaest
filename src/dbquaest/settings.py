@@ -37,5 +37,3 @@ with open(f"{BASE_DIR}/src/dbquaest/.env", 'r') as file:
 
 os.environ[env_list[0][0]] = env_list[0][1]
 os.environ[env_list[1][0]] = env_list[1][1]
-
-print(os.getenv('EMAIL'), os.getenv('PASSWORD'))
