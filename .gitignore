@@ -55,11 +55,9 @@ coverage.xml
 *.mo
 *.pot
 
-# Django stuff:
+# database:
 *.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
+dbquaest.sqlite3
 
 # Flask stuff:
 instance/
