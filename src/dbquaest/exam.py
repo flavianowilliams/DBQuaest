@@ -394,7 +394,7 @@ class Result():
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT test.date, test.class, test.code, test.ROWID, test.point_1, test.point_2, test.point_3, test.point_4, test.point_5, test.consideration_1, test.consideration_2, test.consideration_3, test.consideration_4, test.consideration_5, student.name, student.email, model.title, model.subtitle
+            SELECT test.date, test.code, test.ROWID, test.point_1, test.point_2, test.point_3, test.point_4, test.point_5, test.consideration_1, test.consideration_2, test.consideration_3, test.consideration_4, test.consideration_5, student.name, student.email, model.title, model.subtitle
             FROM test, student, model
             WHERE class = '{clss_input}'
             AND test.fk_model = model.ROWID
@@ -404,26 +404,27 @@ class Result():
         list = res.fetchall()
 
         self.var_date = [item[0] for item in list]
-        self.clss = [item[1] for item in list]
-        self.code = [item[2] for item in list]
-        self.test = [item[3] for item in list]
+        self.code = [item[1] for item in list]
+        self.test = [item[2] for item in list]
 
-        self.point_1 = [item[4] for item in list]
-        self.point_2 = [item[5] for item in list]
-        self.point_3 = [item[6] for item in list]
-        self.point_4 = [item[7] for item in list]
-        self.point_5 = [item[8] for item in list]
+        self.point_1 = [item[3] for item in list]
+        self.point_2 = [item[4] for item in list]
+        self.point_3 = [item[5] for item in list]
+        self.point_4 = [item[6] for item in list]
+        self.point_5 = [item[7] for item in list]
 
-        self.cons_1 = [item[9] for item in list]
-        self.cons_2 = [item[10] for item in list]
-        self.cons_3 = [item[11] for item in list]
-        self.cons_4 = [item[12] for item in list]
-        self.cons_5 = [item[13] for item in list]
+        self.cons_1 = [item[8] for item in list]
+        self.cons_2 = [item[9] for item in list]
+        self.cons_3 = [item[10] for item in list]
+        self.cons_4 = [item[11] for item in list]
+        self.cons_5 = [item[12] for item in list]
 
-        self.name = [item[14] for item in list]
-        self.email = [item[15] for item in list]
-        self.title = [item[16] for item in list]
-        self.subtitle = [item[17] for item in list]
+        self.name = [item[13] for item in list]
+        self.email = [item[14] for item in list]
+        self.title = [item[15] for item in list]
+        self.subtitle = [item[16] for item in list]
+
+        self.clss = clss_input
 
     def create(self,option_list):
 
@@ -503,7 +504,7 @@ class Result():
         res = cur.execute(f"""
             SELECT correction.choice_1, correction.choice_2, correction.choice_3, correction.choice_4, correction.choice_5, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5
             FROM test, correction, student
-            WHERE class = '{self.clss[0]}'
+            WHERE class = '{self.clss}'
             AND correction.fk_test = test.ROWID;
         """)
 
@@ -563,7 +564,7 @@ class Result():
         res = cur.execute(f"""
             SELECT test.ROWID, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5
             FROM test, correction
-            WHERE class = '{self.clss[0]}'
+            WHERE class = '{self.clss}'
             AND correction.fk_test = test.ROWID;
         """)
 
@@ -593,7 +594,7 @@ class Result():
 
             file.write(r'\begin{document}'+'\n')
 
-            file.write(template_report(self.title[0], self.subtitle[0], self.clss[0], self.var_date[0]))
+            file.write(template_report(self.title[0], self.subtitle[0], self.clss, self.var_date[0]))
     
             file.write(r'\begin{table}[h!]'+'\n')
 
@@ -631,29 +632,48 @@ class Result():
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT correction.choice_1, correction.choice_2, correction.choice_3, correction.choice_4, correction.choice_5, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5, test.ROWID, test.date
+            SELECT correction.choice_1, correction.choice_2, correction.choice_3, correction.choice_4, correction.choice_5, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5, correction.consideration_1, correction.consideration_2, correction.consideration_3, correction.consideration_4, correction.consideration_5, test.ROWID
             FROM test, correction
-            WHERE class = '{self.clss[0]}'
+            WHERE class = '{self.clss}'
             AND correction.fk_test = test.ROWID;
         """)
 
         list = res.fetchall()
 
-        self.choice_1 = [item[0] for item in list]
-        self.choice_2 = [item[1] for item in list]
-        self.choice_3 = [item[2] for item in list]
-        self.choice_4 = [item[3] for item in list]
-        self.choice_5 = [item[4] for item in list]
+        choice_1 = [item[0] for item in list]
+        choice_2 = [item[1] for item in list]
+        choice_3 = [item[2] for item in list]
+        choice_4 = [item[3] for item in list]
+        choice_5 = [item[4] for item in list]
 
-        self.result_1 = [float(item[5]) for item in list]
-        self.result_2 = [float(item[6]) for item in list]
-        self.result_3 = [float(item[7]) for item in list]
-        self.result_4 = [float(item[8]) for item in list]
-        self.result_5 = [float(item[9]) for item in list]
+        result_1 = [float(item[5]) for item in list if item[5] is not None]
+        result_2 = [float(item[6]) for item in list if item[6] is not None]
+        result_3 = [float(item[7]) for item in list if item[7] is not None]
+        result_4 = [float(item[8]) for item in list if item[8] is not None]
+        result_5 = [float(item[9]) for item in list if item[9] is not None]
    
-        test_list = [item[10] for item in list]
+        cons_1 = [str(item[10]) for item in list if item[10] is not None]
+        cons_2 = [str(item[11]) for item in list if item[11] is not None]
+        cons_3 = [str(item[12]) for item in list if item[12] is not None]
+        cons_4 = [str(item[13]) for item in list if item[13] is not None]
+        cons_5 = [str(item[14]) for item in list if item[14] is not None]
 
-        self.result = [float(item[5])+float(item[6])+float(item[7])+float(item[8])+float(item[9]) for item in list]
+        test_list = [item[15] for item in list]
+
+        result = []
+        for item in list:
+            sum = 0.0
+            if item[5]:
+                sum += item[5]
+            if item[6]:
+                sum += item[6]
+            if item[7]:
+                sum += item[7]
+            if item[8]:
+                sum += item[8]
+            if item[9]:
+                sum += item[9]
+            result.append(sum)
 
         for i in range(len(test_list)):
 
@@ -664,60 +684,69 @@ class Result():
             mail_body = f"""
                 <p>Avaliação: <strong>{self.title[indx]} - {self.subtitle[indx]}</strong></p>
                 <p>Data: {self.var_date[indx]}</p>
-                <p>Aluno: {self.name[indx]}</p>
+                <p>Aluno(a): {self.name[indx]}</p>
 
             """
 
-            if self.choice_1[i]:
+            if choice_1[i]:
                 mail_body = mail_body+f"""
                 <p>Questão 1</p>
                 <ul>
-                    <li> Alternativa escolhida: {self.choice_1[i]};
-                    <li> Pontos obtidos na questão: {self.result_1[i]}.
+                    <li> Alternativa escolhida: {choice_1[i]};
+                    <li> Considerações: {cons_1[i]}.
+                    <li> Pontos obtidos na questão: {result_1[i]}.
                 </ul>
             """
 
-            if self.choice_2[i]:
+            if choice_2[i]:
                 mail_body = mail_body+f"""
                 <p>Questão 2</p>
                 <ul>
-                    <li> Alternativa escolhida: {self.choice_2[i]};
-                    <li> Pontos obtidos na questão: {self.result_2[i]}.
+                    <li> Alternativa escolhida: {choice_2[i]};
+                    <li> Considerações: {cons_2[i]}.
+                    <li> Pontos obtidos na questão: {result_2[i]}.
                 </ul>
             """
 
-            if self.choice_3[i]:
+            if choice_3[i]:
                 mail_body = mail_body+f"""
                 <p>Questão 3</p>
                 <ul>
-                    <li> Alternativa escolhida: {self.choice_3[i]};
-                    <li> Pontos obtidos na questão: {self.result_3[i]}.
+                    <li> Alternativa escolhida: {choice_3[i]};
+                    <li> Considerações: {cons_3[i]}.
+                    <li> Pontos obtidos na questão: {result_3[i]}.
                 </ul>
             """
 
-            if self.choice_4[i]:
+            if choice_4[i]:
                 mail_body = mail_body+f"""
                 <p>Questão 4</p>
                 <ul>
-                    <li> Alternativa escolhida: {self.choice_4[i]};
-                    <li> Pontos obtidos na questão: {self.result_4[i]}.
+                    <li> Alternativa escolhida: {choice_4[i]};
+                    <li> Considerações: {cons_4[i]}.
+                    <li> Pontos obtidos na questão: {result_4[i]}.
                 </ul>
             """
 
-            if self.choice_5[i]:
+            if choice_5[i]:
                 mail_body = mail_body+f"""
                 <p>Questão 5</p>
                 <ul>
-                    <li> Alternativa escolhida: {self.choice_5[i]};
-                    <li> Pontos obtidos na questão: {self.result_5[i]}.
+                    <li> Alternativa escolhida: {choice_5[i]};
+                    <li> Considerações: {cons_5[i]}.
+                    <li> Pontos obtidos na questão: {result_5[i]}.
                 </ul>
             """
 
             mail_body = mail_body+f"""
-            <p> Total de pontos obtidos: <strong>{self.result[i]} pontos</strong>.</p>
+            <p> Total de pontos obtidos: <strong>{result[i]} pontos</strong>.</p>
             """
 
-            mail_body = mail_body+r"<em>Este email foi gerado automaticamente pelo programa gerador de testes DBQuaest. Para mais informações, acesse o <a href='https://github.com/flavianowilliams/DBQuaest'>Readme</a> no repositório do GitHub.</em>"
+            mail_body = mail_body+r"<p>Este email foi gerado automaticamente pelo programa gerador de testes DBQuaest. Procure o seu professor para esclarecimento de dúvidas sobre este teste.</p>"
+
+            mail_body = mail_body+r"<p><em>Acesse o <a href='https://github.com/flavianowilliams/DBQuaest'>Readme</a> no repositório do GitHub para obter mais informações sobre o programa.</em></p>"
+
+            mail_body = mail_body+r"&#169; 2022 <a href='https://github.com/flavianowilliams/DBQuaest/blob/master/LICENSE'>MIT License</a>"
 
             print('Sending mail to {}...'.format(self.email[indx]))
             email_function(mail_subject, mail_body, self.email[indx])
