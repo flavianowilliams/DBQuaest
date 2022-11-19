@@ -1,12 +1,16 @@
+import os
 import email.message, smtplib, random
 
 def email_function(mail_subject, mail_body, mail_to):
 
+    sender = os.getenv('EMAIL')
+    password = os.getenv('PASSWORD')
+
     msg = email.message.Message()
     msg['Subject'] = mail_subject
-    msg['From'] = 'flavianowilliams@gmail.com'
+    msg['From'] = sender
     msg['To'] = mail_to
-    password = 'epyauccqvbscutmr'
+    password = password
     msg.add_header('Content-Type', 'text/html')
     msg.set_payload(mail_body)
 

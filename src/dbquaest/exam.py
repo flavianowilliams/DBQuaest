@@ -684,7 +684,7 @@ class Result():
             mail_body = f"""
                 <p>Avaliação: <strong>{self.title[indx]} - {self.subtitle[indx]}</strong></p>
                 <p>Data: {self.var_date[indx]}</p>
-                <p>Aluno(a): {self.name[indx]}</p>
+                <p>Aluno: {self.name[indx]}</p>
 
             """
 
