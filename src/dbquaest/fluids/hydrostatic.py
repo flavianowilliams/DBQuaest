@@ -19,7 +19,12 @@ def question(qpoint, opt, ntest):
         f"{dens['symbol']}={dens['value']} {dens['unit']}"
         ]
 
-    formula_list = []
+    formula_list = [
+        '$p=\frac{F}{A}$',
+        '$\rho=\frac{m}{V}$',
+        '$p_2=p_1+\rho g h$',
+        '$\frac{F_1}{A_1}=\frac{F_2}{A_2}$'
+    ]
 
     if opt == '001':
 
@@ -27,14 +32,14 @@ def question(qpoint, opt, ntest):
 
         # generating input values list
         p1 = (5, 95, '\%') # min, max, unidade
-        p2 = (5, 15, 'cm') # min, max, unidade
+        p2 = (5, 15, '\\unit{\centi\metre}') # min, max, unidade
 
         value_1 = random_vars(p1, ntest)
         value_2 = random_vars(p2, ntest)
 
         i0 = choice([i for i in range(10)])
 
-        text = f"""Determine o empuxo sobre uma esfera de raio {value_2[i0]:7.2f} {p2[2]} que possui {value_1[i0]:7.2f} {p1[2]} do seu volume submerso."""
+        text = f"""Determine o empuxo sobre uma esfera de raio \\num{{{value_2[i0]:7.2f}}} {p2[2]} que possui \\num{{{value_1[i0]:7.2f}}} {p1[2]} do seu volume submerso."""
 
         alt_list = [{
             'choice': 4*pi*g_value*dens_value*(value_1[i0]*0.01)*(value_2[i0]*1.e-2)**3/3,
@@ -98,15 +103,15 @@ def question(qpoint, opt, ntest):
         type = 'objective'
 
         # generating input values list
-        p1 = (5, 20, 'L') # min, max, unidade
-        p2 = (7000, 7000, '$kg/m^3$') # min, max, unidade
+        p1 = (5, 20, '\\unit{\litre}') # min, max, unidade
+        p2 = (7000, 7000, '\\unit[per-mode = symbol]{\kilo\gram\per\cubic\metre}') # min, max, unidade
 
         value_1 = random_vars(p1, ntest)
         value_2 = random_vars(p2, ntest)
 
         i0 = choice([i for i in range(10)])
 
-        text = f"""O peso de um recipiente com água é igual ao peso do suporte e da esfera de ferro maciço (figura a). Quando a esfera suspensa é abaixada e mergulhada na água, a balança se inclina (figura b). Considere que o volume da bola é {value_1[i0]:7.2f} {p1[2]}, a densidade do ferro é {value_2[i0]:7.2f} {p2[2]} e a densidade da água é {dens_value} {dens['unit']}. Calcule a massa adicional que deve ser colocada no lado direito da balança a fim de equilibrá-la novamente, com a bola ainda suspensa e imersa na água."""
+        text = f"""O peso de um recipiente com água é igual ao peso do suporte e da esfera de ferro maciço (figura a). Quando a esfera suspensa é abaixada e mergulhada na água, a balança se inclina (figura b). Considere que o volume da bola é \\num{{{value_1[i0]:7.2f}}} {p1[2]}, a densidade do ferro é \\num{{{value_2[i0]:7.2f}}} {p2[2]} e a densidade da água é \\num{{{dens_value}}} {dens['unit']}. Calcule a massa adicional que deve ser colocada no lado direito da balança a fim de equilibrá-la novamente, com a bola ainda suspensa e imersa na água."""
 
         alt_list = [{
             'choice': 2*dens_value*(value_1[i0]*1.e-3),

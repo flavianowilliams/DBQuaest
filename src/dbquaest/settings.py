@@ -4,6 +4,7 @@ from dbquaest.electromagnetism import magnetism, electrodynamics, electrostatic,
 from dbquaest.quantum_physics import particle_wave_duality, uncertainty_principle, schrodinger_equation
 from dbquaest.waves import mhs
 from dbquaest.fluids import hydrostatic, hydrodynamics
+from dbquaest.thermodynamics import zero_law
 
 # set base directory
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -13,6 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 MODULES = [
     hydrostatic,
     hydrodynamics,
+    zero_law,
     mhs,
     electrostatic,
     electrodynamics,

@@ -61,6 +61,7 @@ def string_format(string):
 
     string = string.replace('[', '').replace(']', '').replace('\cdot', 'cdot')
     string = string.replace('x0c','f').replace('\lambda', 'lambda').replace('\phi','phi')
+    string = string.replace('\r', 'r')
 
     list = string.split(',')
 

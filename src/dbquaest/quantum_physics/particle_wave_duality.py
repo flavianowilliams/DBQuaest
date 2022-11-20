@@ -40,7 +40,7 @@ def question(qpoint, opt, ntest):
 
         i0 = choice([i for i in range(10)])
 
-        text = f"""A função trabalho do sódio é {value_1[i0]:7.2f} {p1[2]}, determine a energia cinética dos elétrons que são emitidos desse material quando ele é bombardeado por radiação com comprimento de onda de {value_2[i0]:7.2f} {p2[2]}."""
+        text = f"""A função trabalho do sódio é \\num{{{value_1[i0]:7.2f}}} {p1[2]}, determine a energia cinética dos elétrons que são emitidos desse material quando ele é bombardeado por radiação com comprimento de onda de \\num{{{value_2[i0]:7.2f}}} {p2[2]}."""
 
         alt_list = [{
             'choice': h_value*c_value/(value_2[i0]*1.e-9)-value_1[i0],
@@ -114,7 +114,7 @@ def question(qpoint, opt, ntest):
 #        var_1 = random.uniform(p2[0], p2[1])
 #        var_2 = random.uniform(p3[0], p3[1])
 
-        text = f"""Calcule o comprimento de onda de uma bola de basebol que possui uma massa de {value_1[i0]:7.2f} {p1[2]} a uma velocidade de {value_2[i0]:7.2f} {p2[2]}. Seria possível observar os efeitos da física quântica nesse caso?"""
+        text = f"""Calcule o comprimento de onda de uma bola de basebol que possui uma massa de \\num{{{value_1[i0]:7.2f}}} {p1[2]} a uma velocidade de \\num{{{value_2[i0]:7.2f}}} {p2[2]}. Seria possível observar os efeitos da física quântica nesse caso?"""
 
         alt_list = [{
             'choice': h2_value*1.e9/((value_1[i0]*1.0e-3)*(value_2[i0]/3.6)),
