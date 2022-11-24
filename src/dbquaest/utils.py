@@ -60,8 +60,11 @@ def eval_string(var, option):
 def string_format(string):
 
     string = string.replace('[', '').replace(']', '').replace('\cdot', 'cdot')
-    string = string.replace('x0c','f').replace('\lambda', 'lambda').replace('\phi','phi')
-    string = string.replace('\r', 'r')
+    string = string.replace('x0c','f').replace('x0b','v')
+    string = string.replace('\r', 'r').replace('\lambda', 'lambda').replace('\phi','phi')
+    string = string.replace('\Delta', 'Delta').replace('\int', 'int').replace('\mu', 'mu')
+    string = string.replace('\Phi', 'Phi').replace('\hat', 'hat').replace('\pi', 'pi').replace('\o', 'o')
+    string = string.replace('\s', 's')
 
     list = string.split(',')
 

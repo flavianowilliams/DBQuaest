@@ -79,7 +79,7 @@ def question(qpoint, opt, ntest):
 
         figure = ''
 
-        unit = 'N'
+        unit = '\\unit{\\newton}'
 
         for i in range(ntest):
             if i not in [i0]:
@@ -157,7 +157,7 @@ def question(qpoint, opt, ntest):
 
         figure = 'fluids_hydrostatic_002'
 
-        unit = 'kg'
+        unit = '\\unit{\kilo\gram}'
 
         for i in range(ntest):
             if i not in [i0]:

@@ -2,7 +2,7 @@ import sqlite3, os
 from datetime import date
 from dbquaest.utils import email_function, eval_float, eval_string, string_format
 from dbquaest.settings import BASE_DIR, MODULES, DB_DIR
-from dbquaest.tex import template, template_figure, template_document, template_report
+from dbquaest.tex import template, template_figure, template_document, template_report, template_footer
 
 ######################################################################################################
 # classe Modelo
@@ -326,6 +326,16 @@ class Test():
 
                 formula_list = string_format(formulas)
 
+                cte_line=''
+                for cte in constants_list:
+                    cte_line = cte_line+cte
+
+                form_line=''
+                for cte in formula_list:
+                    form_line = form_line+cte
+
+                file.write(template_footer(cte_line,form_line))
+
                 file.write(template_document(code, title, subtitle, name, self.clss, var_date))
     #
                 file.write(f'\\begin{{questions}}\n')
@@ -342,28 +352,28 @@ class Test():
 
                         file.write(txt)
 
-                file.write(f'\\end{{multicols*}}\n')
+                file.write(f'\\end{{multicols*}}')
+
+#                file.write(r'\begin{minipage}[c]{\linewidth}'+'\n')
+#                file.write(f'\\begin{{flushleft}}'+'\n')
+#                file.write(f'Constants:'+'\n')
+#                file.write(f'%\linebreak'+'\n')
+#                for cte in constants_list:
+#                    file.writelines(f'{cte}; ')
+
+#                file.write(f'\\end{{flushleft}}'+'\n')
+#                file.write(r'\end{minipage}'+'\n')
+#                file.write(f'\\vspace{{0.5cm}}\\linebreak'+'\n')
+#                file.write(r'\begin{minipage}[b]{\linewidth}'+'\n')
+#                file.write(f'\\begin{{flushleft}}'+'\n')
+#                file.write(f'Formulas:'+'\n')
+#                file.write(f'%\linebreak'+'\n')
+#                for form in formula_list:
+#                    file.writelines(f'{form}; ')
+#                file.write(f'\\end{{flushleft}}'+'\n')
+#                file.write(r'\end{minipage}'+'\n')
 
                 file.write(f'\\end{{questions}}\n')
-
-                file.write(r'\begin{minipage}[b]{\linewidth}')
-                file.write(f'\\begin{{flushleft}}')
-                file.write(f'Constants:')
-                file.write(f'\linebreak')
-                for cte in constants_list:
-                    file.writelines(f'{cte}; ')
-
-                file.write(f'\\end{{flushleft}}')
-                file.write(r'\end{minipage}')
-                file.write(f'\\vspace{{0.5cm}}\\linebreak')
-                file.write(r'\begin{minipage}[b]{\linewidth}')
-                file.write(f'\\begin{{flushleft}}')
-                file.write(f'Formulas:')
-                file.write(f'\linebreak')
-                for form in formula_list:
-                    file.writelines(f'{form}; ')
-                file.write(f'\\end{{flushleft}}')
-                file.write(r'\end{minipage}')
 
                 file.write(f'\\newpage\n')
 
@@ -371,7 +381,7 @@ class Test():
 
             file.close()
       
-        os.system('pdflatex main.tex')
+        os.system('pdflatex -shell-escape main.tex')
         os.system('rm main.aux main.log')
 
     def save(self):

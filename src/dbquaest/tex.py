@@ -13,8 +13,13 @@ def template():
 \usepackage{tkz-base}
 \usepackage{tkz-fct}
 \usepackage{tkz-euclide}
-\usepackage[a4paper, portrait, margin=2cm]{geometry}
+\usepackage[a4paper, portrait, margin=2cm, includefoot]{geometry}
 \usepackage[output-decimal-marker={,}]{siunitx}
+
+\pagestyle{headandfoot}
+\runningfootrule
+
+\rfoot{\ifincomplete{Question \IncompleteQuestion\ continues on the next page\ldots}{}}
 
 \usetikzlibrary{arrows,3d,calc,automata,positioning,shadows,math,fit,shapes}
 \usetikzlibrary{patterns,hobby,optics,calc}
@@ -98,4 +103,12 @@ def template_report(title, subtitle, clss, var_date):
     \\end{{minipage}}
     \\vspace{{0.5cm}} \\hrule \\vspace{{0.5cm}}
     """
+    return template
+
+def template_footer(constants, formulas):
+
+    template = f"""
+    \\runningfooter{{'Constants: '{constants}\linebreak 'Formulas: '{formulas}\linebreak\\\}}{{}}{{}}
+    """
+
     return template
