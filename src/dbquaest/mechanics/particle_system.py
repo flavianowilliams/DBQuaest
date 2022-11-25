@@ -15,7 +15,12 @@ def question(qpoint, opt, ntest):
     ]
 
     formula_list = [
-        '$x_{cm}=\frac{1}{M}\sum m_ix_i$'
+        '$x_{cm}=\frac{1}{M}\sum m_ix_i$',
+        '$y_{cm}=\frac{1}{M}\sum m_iy_i$',
+        '$z_{cm}=\frac{1}{M}\sum m_iz_i$',
+        '$p_{cm}=\frac{1}{M}\sum p_i$',
+        '$p=mv$',
+        '$\vec{F}_{res}=M\vec{a}_{cm}$'
         ]
 
     if opt == '001':
@@ -191,12 +196,6 @@ def question(qpoint, opt, ntest):
             'consideration': 'Alternativa correta',
             'point': qpoint
             }]
-
-#        alt_list.append({
-#            'choice': (value_5[i0]-value_4[i0]*g_value*value_1[i0])*(value_2[i0]+value_3[i0])/(value_1[i0]+value_2[i0]+value_3[i0]),
-#            'consideration': 'Calculou a reação no bloco e não a força resultante',
-#            'point': 0.0
-#            })
 
         alt_list.append({
             'choice': (value_5[i0]-value_4[i0]*g_value*value_1[i0]),

@@ -315,6 +315,10 @@ class Test():
 
             file.write(r'\begin{document}'+'\n')
 
+            file.write(f'\\title{{{title}\\\\{subtitle}}}'+'\n')
+            file.write(r'\maketitle'+'\n')
+            file.write(r'\newpage'+'\n')
+
             for i in range(0,ntest):
                 name = model_list[i][2]
                 var_date = model_list[i][3]
@@ -353,25 +357,6 @@ class Test():
                         file.write(txt)
 
                 file.write(f'\\end{{multicols*}}')
-
-#                file.write(r'\begin{minipage}[c]{\linewidth}'+'\n')
-#                file.write(f'\\begin{{flushleft}}'+'\n')
-#                file.write(f'Constants:'+'\n')
-#                file.write(f'%\linebreak'+'\n')
-#                for cte in constants_list:
-#                    file.writelines(f'{cte}; ')
-
-#                file.write(f'\\end{{flushleft}}'+'\n')
-#                file.write(r'\end{minipage}'+'\n')
-#                file.write(f'\\vspace{{0.5cm}}\\linebreak'+'\n')
-#                file.write(r'\begin{minipage}[b]{\linewidth}'+'\n')
-#                file.write(f'\\begin{{flushleft}}'+'\n')
-#                file.write(f'Formulas:'+'\n')
-#                file.write(f'%\linebreak'+'\n')
-#                for form in formula_list:
-#                    file.writelines(f'{form}; ')
-#                file.write(f'\\end{{flushleft}}'+'\n')
-#                file.write(r'\end{minipage}'+'\n')
 
                 file.write(f'\\end{{questions}}\n')
 

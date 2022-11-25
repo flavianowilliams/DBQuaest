@@ -24,17 +24,8 @@ def question(qpoint, opt, ntest):
 
         i0 = choice([i for i in range(10)])
 
-        text = f"""Valor 1: \\num{{{value_1[i0]:7.2f}}} {p1[2]}. Valor 2: \\num{{{value_2[i0]:7.2f}}} {p2[2]}
+        text = f"""Um elétron com energia cinética de \\num{{{value_1[i0]:7.2f}}} {p1[2]} incide em um potencial degrau de {{{value_2[i0]:7.2f}}} {p2[2]}. Determine o alcance que ele irá penetrar na região energeticamente proibida quando a sua probabilidade for {{{value_2[i0]:7.2f}}} vezes menor que o seu valor ao incidir no degrau de potencial.
         
-        \\begin{{minipage}}[c]{{0.5\\linewidth}}
-            \\begin{{center}}
-                \\begin{{tikzpicture}}[scale=0.5,transform shape, font=\Large]
-                    \\tkzInit[xmin=0,xmax=10,ymin=-3,ymax=3]
-                    \\tkzClip[space=1.75]
-                \end{{tikzpicture}}
-            \end{{center}}
-        \end{{minipage}}
-
         """
 
         alt_list = [{
@@ -65,28 +56,6 @@ def question(qpoint, opt, ntest):
                         })
 
         indx = random.sample(range(0,10),10)
-
-        alternative_list = [alt_list[u] for u in indx]
-
-        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
-
-    elif opt == '001':
-
-        type = 'conceptual'
-
-        text = f"""Conceptual question"""
-
-        alt_list = [{'choice': '','consideration': 'Alternativa correta','point': qpoint}]
-        alt_list.append({'choice': '','consideration': '','point': 0.0})
-        alt_list.append({'choice': '','consideration': '','point': 0.0})
-        alt_list.append({'choice': '','consideration': '','point': 0.0})
-        alt_list.append({'choice': '','consideration': '','point': 0.0})
-
-        figure = ''
-
-        unit = ''
-
-        indx = random.sample(range(0,5),5)
 
         alternative_list = [alt_list[u] for u in indx]
 
