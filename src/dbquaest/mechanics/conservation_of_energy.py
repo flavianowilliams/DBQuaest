@@ -198,11 +198,120 @@ def question(qpoint, opt, ntest):
 
         figure = ''
 
-        unit = '\\unit{\joule}'
+        unit = '\\unit[per-mode = symbol]{\metre\per\second}'
 
         for i in range(ntest):
             if i not in [i0]:
                 val = sqrt((2*value_2[i]-value_3[i])*value_4[i]/(value_1[i]))
+                minx_list = [abs(val-item['choice']) for item in alt_list]
+                if min(minx_list) >= 0.01:
+                    alt_list.append({
+                        'choice': val,
+                        'consideration': 'Alternativa errada',
+                        'point': 0.0
+                        })
+
+        indx = random.sample(range(0,10),10)
+
+        alternative_list = [alt_list[u] for u in indx]
+
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+
+    elif opt == '003':
+
+        type = 'objective'
+
+        # generating input values list
+        p1 = (1, 100, '\\unit{\kilo\gram}') # min, max, unidade
+        p2 = (5, 15, '\\unit{\metre}') # min, max, unidade
+        p3 = (1, 4, '\\unit{\metre}') # min, max, unidade
+        p4 = (5, 100, '\\unit{\\newton}') # min, max, unidade
+
+        value_1 = random_vars(p1, ntest)
+        value_2 = random_vars(p2, ntest)
+        value_3 = random_vars(p3, ntest)
+        value_4 = random_vars(p4, ntest)
+
+        i0 = choice([i for i in range(10)])
+
+        text = f"""Considere uma partícula de massa \\num{{{value_1[i0]}}} {p1[2]} se movimentando na direção do eixo x. Ela percorre uma trajetória na direção x mediante a ação de uma força $\\vec{{F}}$ como mostra a figura abaixo. À partir da origem a força aumenta continuamente até $x_1=\\num{{{value_3[i0]}}}$ {p3[2]}, e em seguida a força diminui gradualmente até zero em $x_2=\\num{{{value_2[i0]}}}$ {p2[2]}. Sabendo que a força máxima $F_{{max}}$ que atua sobre ela equivale a \\num{{{value_4[i0]}}} {p4[2]}, determine o trabalho realizado pela força $\\vec{{F}}$ ao longo de todo o percurso.
+
+        \\begin{{minipage}}[c]{{0.5\\linewidth}}
+            \\begin{{center}}
+                \\begin{{tikzpicture}}[scale=0.5,transform shape, font=\Large]
+                    \\tkzInit[xmin=0,xmax=10,ymin=0,ymax=6]
+                    \\tkzClip[space=1.75]
+                    \\tkzDrawX[right,label={{x(m)}}]
+                    \\tkzDrawY[above,label={{F(N)}}]
+            		\\tkzFct[domain=0:5,color=red,line width=1.5pt]{{x}}
+                    \\tkzDefPointByFct[ref=A](5)
+                    \\tkzPointShowCoord(A)
+            		\\tkzFct[domain=5:10,color=red,line width=1.5pt]{{-x+10}}
+                    \\tkzDefPoints{{5/0/x1, 10/0/x2, 0/5/F}}
+                    \\tkzText[color=black, below](x1){{$x_1$}}
+                    \\tkzText[color=black, below](x2){{$x_2$}}
+                    \\tkzText[color=black, left](F){{$F_{{max}}$}}
+                \end{{tikzpicture}}
+            \end{{center}}
+        \end{{minipage}}
+
+        """
+
+        alt_list = [{
+            'choice': value_2[i0]*value_4[i0]/2,
+            'consideration': 'Alternativa correta',
+            'point': qpoint
+            }]
+
+        alt_list.append({
+            'choice': value_4[i0]*(value_2[i0]-value_3[i0])/2,
+            'consideration': 'Definiu errado a área do trabalho.',
+            'point': 0.0
+            })
+
+        alt_list.append({
+            'choice': value_4[i0]*(value_3[i0]-value_2[i0])/2,
+            'consideration': 'Definiu errado a área do trabalho.',
+            'point': 0.0
+            })
+
+        alt_list.append({
+            'choice': -value_2[i0]*value_4[i0]/2,
+            'consideration': 'Definiu errado a relação entre trabalho e a área abaixo do gráfico.',
+            'point': 0.0
+            })
+
+        alt_list.append({
+            'choice': value_3[i0]*value_4[i0]/2,
+            'consideration': 'Definiu errado a área do trabalho.',
+            'point': 0.0
+            })
+
+        alt_list.append({
+            'choice': value_2[i0]*value_4[i0],
+            'consideration': 'Definiu errado a área do trabalho.',
+            'point': 0.0
+            })
+
+        alt_list.append({
+            'choice': value_2[i0]/value_4[i0],
+            'consideration': 'Definiu errado a área do trabalho.',
+            'point': 0.0
+            })
+
+        alt_list.append({
+            'choice': value_4[i0]/value_2[i0],
+            'consideration': 'Definiu errado a área do trabalho.',
+            'point': 0.0
+            })
+
+        figure = ''
+
+        unit = '\\unit{\joule}'
+
+        for i in range(ntest):
+            if i not in [i0]:
+                val = value_2[i]*value_4[i]/2
                 minx_list = [abs(val-item['choice']) for item in alt_list]
                 if min(minx_list) >= 0.01:
                     alt_list.append({

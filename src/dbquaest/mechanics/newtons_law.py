@@ -251,6 +251,50 @@ def question(qpoint, opt, ntest):
 
         context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
+    elif opt == '003':
+
+        type = 'conceptual'
+
+        text = f"""O código de trânsito brasileiro determina que "é obrigatório o uso do cinto de segurança para condutor e passageiros em todas as vias do território nacional". Essa ação justifica evitar acidentes fatais devido à (ao)..."""
+
+        alt_list = [{'choice': 'princípio da inércia','consideration': 'Alternativa correta','point': qpoint}]
+        alt_list.append({'choice': 'ação de uma força externa','consideration': '','point': 0.0})
+        alt_list.append({'choice': 'princípio da ação e reação','consideration': '','point': 0.0})
+        alt_list.append({'choice': 'força de atrito exercida pelo obstáculo','consideration': '','point': 0.0})
+        alt_list.append({'choice': 'segunda lei de Newton','consideration': '','point': 0.0})
+
+        figure = 'mechanics_newtons_law_003'
+
+        unit = ''
+
+        indx = random.sample(range(0,5),5)
+
+        alternative_list = [alt_list[u] for u in indx]
+
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+
+    elif opt == '004':
+
+        type = 'conceptual'
+
+        text = f"""Uma mosca colide com o para-brisa de um ônibus que se move rapidamente. Qual dos dois sofre a ação de uma força de maior intensidade no impacto?"""
+
+        alt_list = [{'choice': 'A força do ônibus sobre a mosca tem módulo igual ao da força da mosca sobre o ônibus.','consideration': 'Alternativa correta','point': qpoint}]
+        alt_list.append({'choice': 'A mosca.','consideration': '','point': 0.0})
+        alt_list.append({'choice': 'O ônibus.','consideration': '','point': 0.0})
+        alt_list.append({'choice': 'As forças que atuam em ambos irão se anular','consideration': '','point': 0.0})
+        alt_list.append({'choice': 'Não há informação suficiente para sabermos.','consideration': '','point': 0.0})
+
+        figure = ''
+
+        unit = ''
+
+        indx = random.sample(range(0,5),5)
+
+        alternative_list = [alt_list[u] for u in indx]
+
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+
     else:
 
         context = {}
