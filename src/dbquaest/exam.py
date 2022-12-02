@@ -206,7 +206,7 @@ class Test():
                         consideration.append(cons)
                         choice = format(choice+'\choice '+alternative["choice"]+' '+unit+'\n')
 
-                    txt = f"\'\\question[{code['point']}] {text}\n\n{choice}\\end{{choices}}\n\'"
+                    txt = f"\'\\question[{code['point']}] {text}\n{fig}\n{choice}\\end{{choices}}\n\'"
 
                 elif type == 'objective':
 

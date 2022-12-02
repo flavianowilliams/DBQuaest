@@ -104,6 +104,28 @@ def question(qpoint, opt, ntest):
 
         context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
+    elif opt == '002':
+
+        type = 'conceptual'
+
+        text = f"""Quando uma torneira é aberta, observa-se que o fluxo de água que sai dela tende a afinar-se. Esse fenômeno pode ser explicado por meio:"""
+
+        alt_list = [{'choice': 'da equação da continuidade.','consideration': 'Alternativa correta.','point': qpoint}]
+        alt_list.append({'choice': 'das ligações de hidrogênio presentes na água.','consideration': 'Alternativa errada.','point': 0.0})
+        alt_list.append({'choice': 'das forças intermoleculares presentes na água.','consideration': 'Alternativa errada.','point': 0.0})
+        alt_list.append({'choice': 'da conservação da energia mecânica.','consideration': 'Alternativa errada.','point': 0.0})
+        alt_list.append({'choice': 'do atrito da água com o ar.','consideration': 'Alternativa errada.','point': 0.0})
+
+        figure = ''
+
+        unit = ''
+
+        indx = random.sample(range(0,5),5)
+
+        alternative_list = [alt_list[u] for u in indx]
+
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+
     else:
 
         context = {}

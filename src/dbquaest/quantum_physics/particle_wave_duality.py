@@ -103,18 +103,15 @@ def question(qpoint, opt, ntest):
 
         type = 'objective'
 
-        p1 = [100, 200, 'g']
-        p2 = [80, 200, 'km/h']
+        p1 = [100, 200, '\\unit{\gram}']
+        p2 = [80, 200, '\\unit[per-mode = symbol]{\kilo\metre\per\hour}']
 
         value_1 = random_vars(p1, ntest)
         value_2 = random_vars(p2, ntest)
 
         i0 = choice([i for i in range(10)])
 
-#        var_1 = random.uniform(p2[0], p2[1])
-#        var_2 = random.uniform(p3[0], p3[1])
-
-        text = f"""Calcule o comprimento de onda de uma bola de basebol que possui uma massa de \\num{{{value_1[i0]:7.2f}}} {p1[2]} a uma velocidade de \\num{{{value_2[i0]:7.2f}}} {p2[2]}. Seria possível observar os efeitos da física quântica nesse caso?"""
+        text = f"""Calcule o comprimento de onda de uma bola de basebol que possui uma massa de \\num{{{value_1[i0]}}} {p1[2]} a uma velocidade de \\num{{{value_2[i0]}}} {p2[2]}. Seria possível observar os efeitos da física quântica nesse caso?"""
 
         alt_list = [{
             'choice': h2_value*1.e9/((value_1[i0]*1.0e-3)*(value_2[i0]/3.6)),
@@ -178,7 +175,7 @@ def question(qpoint, opt, ntest):
 
         figure = ''
 
-        unit = 'nm'
+        unit = '\\unit{\\nano\metre}'
 
         indx = random.sample(range(0,10),10)
 
