@@ -96,7 +96,58 @@ class Student():
         cur = self.con.cursor()
 
         cur.execute(f"""
-            DELETE FROM studento WHERE name = '{name}'
+            DELETE FROM student WHERE name = '{name}'
+        """)
+
+    def save(self):
+
+        self.con.commit()
+        self.con.close()
+
+######################################################################################################
+# classe Classe
+######################################################################################################
+
+class Class():
+
+    def __init__(self, name):
+
+        self.con = sqlite3.connect(DB_DIR+"dbquaest.sqlite3")
+
+        self.name = name
+
+    def create(self, student_list):
+
+        cur = self.con.cursor()
+
+        res = cur.execute(f"""
+            SELECT ROWID, name
+            FROM student
+        """)
+
+        table_list = res.fetchall()
+
+        self.fk_list = [item[0] for item in table_list if item[1] in student_list]
+
+        print(table_list)
+
+        for fk in self.fk_list:
+
+            cur.execute(f"""
+                INSERT INTO class VALUES(
+                    '{date.today()}',
+                    '{date.today()}',
+                    '{self.name}',
+                    '{fk}'
+                    )
+                """)
+
+    def delete(self):
+
+        cur = self.con.cursor()
+
+        cur.execute(f"""
+            DELETE FROM class WHERE name = '{self.name}'
         """)
 
     def save(self):
@@ -380,44 +431,46 @@ class Test():
 
 class Result():
 
-    def __init__(self, clss_input):
+    def __init__(self, clss, title, subtitle):
 
         self.con = sqlite3.connect(DB_DIR+"dbquaest.sqlite3")
 
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT test.date, test.code, test.ROWID, test.point_1, test.point_2, test.point_3, test.point_4, test.point_5, test.consideration_1, test.consideration_2, test.consideration_3, test.consideration_4, test.consideration_5, student.name, student.email, model.title, model.subtitle
-            FROM test, student, model
-            WHERE class = '{clss_input}'
-            AND test.fk_model = model.ROWID
-            AND test.fk_student = student.ROWID;
+            SELECT test.date, test.code, test.ROWID, test.point_1, test.point_2, test.point_3, test.    point_4, test.point_5, test.consideration_1, test.consideration_2, test.consideration_3, test.consideration_4, test.consideration_5, test.class, student.name, student.email, model.title, model.subtitle
+            FROM((test
+                INNER JOIN model ON test.fk_model = model.ROWID)
+                INNER JOIN student ON test.fk_student = student.ROWID)
+            WHERE test.class = '{clss}'
+            AND model.title = '{title}'
+            AND model.subtitle = '{subtitle}'
         """)
 
-        list = res.fetchall()
+        self.list = res.fetchall()
 
-        self.var_date = [item[0] for item in list]
-        self.code = [item[1] for item in list]
-        self.test = [item[2] for item in list]
+        self.var_date = [item[0] for item in self.list]
+        self.code = [item[1] for item in self.list]
+        self.test = [item[2] for item in self.list]
 
-        self.point_1 = [item[3] for item in list]
-        self.point_2 = [item[4] for item in list]
-        self.point_3 = [item[5] for item in list]
-        self.point_4 = [item[6] for item in list]
-        self.point_5 = [item[7] for item in list]
+        self.point_1 = [item[3] for item in self.list]
+        self.point_2 = [item[4] for item in self.list]
+        self.point_3 = [item[5] for item in self.list]
+        self.point_4 = [item[6] for item in self.list]
+        self.point_5 = [item[7] for item in self.list]
 
-        self.cons_1 = [item[8] for item in list]
-        self.cons_2 = [item[9] for item in list]
-        self.cons_3 = [item[10] for item in list]
-        self.cons_4 = [item[11] for item in list]
-        self.cons_5 = [item[12] for item in list]
+        self.cons_1 = [item[8] for item in self.list]
+        self.cons_2 = [item[9] for item in self.list]
+        self.cons_3 = [item[10] for item in self.list]
+        self.cons_4 = [item[11] for item in self.list]
+        self.cons_5 = [item[12] for item in self.list]
 
-        self.name = [item[13] for item in list]
-        self.email = [item[14] for item in list]
-        self.title = [item[15] for item in list]
-        self.subtitle = [item[16] for item in list]
+        self.clss = [item[13] for item in self.list]
 
-        self.clss = clss_input
+        self.name = [item[14] for item in self.list]
+        self.email = [item[15] for item in self.list]
+        self.title = [item[16] for item in self.list]
+        self.subtitle = [item[17] for item in self.list]
 
     def create(self,option_list):
 

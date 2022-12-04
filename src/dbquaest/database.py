@@ -89,6 +89,14 @@ def make_database():
             telephone varchar(255) DEFAULT NULL
             )""")
 
+        cur.execute(r"""CREATE TABLE class(
+            created date NOTNULL,
+            updated date NOTNULL,
+            name varchar(255) NOTNULL,
+            fk_student integer NOTNULL UNIQUE,
+            FOREIGN KEY (fk_student) REFERENCES student(ROWID)
+            )""")
+
         cur.execute(r"""CREATE TABLE correction(
             created date NOT NULL,
             updated date NOT NULL,
