@@ -122,7 +122,7 @@ class Class():
 
         res = cur.execute(f"""
             SELECT ROWID, name
-            FROM student
+            FROM student;
         """)
 
         table_list = res.fetchall()
@@ -465,12 +465,12 @@ class Result():
         self.cons_4 = [item[11] for item in self.list]
         self.cons_5 = [item[12] for item in self.list]
 
-        self.clss = [item[13] for item in self.list]
-
         self.name = [item[14] for item in self.list]
         self.email = [item[15] for item in self.list]
         self.title = [item[16] for item in self.list]
         self.subtitle = [item[17] for item in self.list]
+
+        self.clss = clss
 
     def create(self,option_list):
 
@@ -610,7 +610,7 @@ class Result():
         res = cur.execute(f"""
             SELECT test.ROWID, correction.point_1, correction.point_2, correction.point_3, correction.point_4, correction.point_5
             FROM test, correction
-            WHERE class = '{self.clss}'
+            WHERE test.class = '{self.clss}'
             AND correction.fk_test = test.ROWID;
         """)
 
