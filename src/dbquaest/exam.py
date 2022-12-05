@@ -161,13 +161,15 @@ class Class():
 
 class Test():
 
-    def __init__(self, clss):
+    def __init__(self, clss, title, subtitle):
 
         self.con = sqlite3.connect(DB_DIR+"dbquaest.sqlite3")
 
         self.clss = clss
+        self.title = title
+        self.subtitle = subtitle
 
-    def create(self, model, std, var_date):
+    def create(self, std, var_date):
 
         ntest = len(std)
 
@@ -176,12 +178,15 @@ class Test():
         cur = self.con.cursor()
 
         res = cur.execute(f"""
-            SELECT questions, module_1, submodule_1, code_1, point_1, module_2, submodule_2, code_2, point_2, module_3, submodule_3, code_3, point_3, module_4, submodule_4, code_4, point_4, module_5, submodule_5, code_5, point_5
+            SELECT questions, module_1, submodule_1, code_1, point_1, module_2, submodule_2, code_2, point_2, module_3, submodule_3, code_3, point_3, module_4, submodule_4, code_4, point_4, module_5, submodule_5, code_5, point_5, ROWID
             FROM model
-            WHERE ROWID = {model};
+            WHERE title = '{self.title}'
+            AND subtitle = '{self.subtitle}';
         """)
 
         model_list = res.fetchone()
+
+        model = model_list[21]
 
         std_data = []
 
