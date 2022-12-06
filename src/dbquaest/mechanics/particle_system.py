@@ -53,6 +53,7 @@ def question(qpoint, opt, ntest):
                     \\tkzClip[space=1.75]
                     \\tkzDrawX[right,label={{x}}]
                     \\tkzDefPoints{{1/0/A, 3/5/B}}
+                    \\tkzText[below=0.25](A){{0}}
                     \\tkzDefRectangle[fill=gray!25](A,B)\\tkzGetPoints{{C}}{{D}}
                     \\tkzDrawPolygon(A, C, B, D)
                     \draw (D) to[dim arrow={{label=\\num{{{value_4[i0]}}} {p4[2]}}}] (B);
@@ -75,21 +76,27 @@ def question(qpoint, opt, ntest):
         """
 
         alt_list = [{
-            'choice': (value_2[i0]*(value_4[i0]+value_5[i0])+value_3[i0]*(2*value_5[i0]+value_4[i0]+value_6[i0]))/(2*(value_1[i0]+value_2[i0]+value_3[i0])),
+            'choice': (value_1[i0]*value_4[i0]+value_2[i0]*(2*value_4[i0]+value_5[i0])+value_3[i0]*(2*value_4[i0]+2*value_5[i0]+value_6[i0]))/(2*(value_1[i0]+value_2[i0]+value_3[i0])),
             'consideration': 'Alternativa correta',
             'point': qpoint
             }]
 
         alt_list.append({
-            'choice': (value_1[i0]*value_4[i0]+value_2[i0]*value_5[i0]+value_3[i0]*value_6[i0])/(2*(value_1[i0]+value_2[i0]+value_3[i0])),
+            'choice': (value_1[i0]*value_4[i0]+value_2[i0]*(value_4[i0]+value_5[i0])+value_3[i0]*(value_4[i0]+value_5[i0]+value_6[i0]))/(value_1[i0]+value_2[i0]+value_3[i0]),
             'consideration': 'Errou em calcular o centro de massa',
-            'point': 0.0
+            'point': 0.5
             })
 
         alt_list.append({
-            'choice': (value_2[i0]*(value_4[i0]+value_5[i0])+value_3[i0]*(2*value_5[i0]+value_4[i0]+value_6[i0]))/((value_1[i0]+value_2[i0]+value_3[i0])),
+            'choice': (value_1[i0]*value_4[i0]+value_2[i0]*value_5[i0]+value_3[i0]*value_6[i0])/(value_1[i0]+value_2[i0]+value_3[i0]),
             'consideration': 'Errou em calcular o centro de massa',
-            'point': 0.75
+            'point': 0.25
+            })
+
+        alt_list.append({
+            'choice': (value_1[i0]*value_4[i0]+value_2[i0]*(2*value_4[i0]+value_5[i0])+value_3[i0]*(2*value_4[i0]+2*value_5[i0]+value_6[i0]))/((value_1[i0]+value_2[i0]+value_3[i0])),
+            'consideration': 'Errou em calcular o centro de massa',
+            'point': 0.0
             })
 
         alt_list.append({
@@ -128,7 +135,7 @@ def question(qpoint, opt, ntest):
 
         for i in range(ntest):
             if i not in [i0]:
-                val = (value_2[i]*(value_4[i]+value_5[i])+value_3[i]*(2*value_5[i]+value_4[i]+value_6[i]))/(2*(value_1[i]+value_2[i]+value_3[i]))
+                val = (value_1[i]*value_4[i]+value_2[i]*(2*value_4[i]+value_5[i])+value_3[i]*(2*value_4[i]+2*value_5[i]+value_6[i]))/(2*(value_1[i]+value_2[i]+value_3[i]))
                 minx_list = [abs(val-item['choice']) for item in alt_list]
                 if min(minx_list) >= 0.01:
                     alt_list.append({

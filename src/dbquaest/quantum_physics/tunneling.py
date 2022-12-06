@@ -23,7 +23,10 @@ def question(qpoint, opt, ntest):
         f"{c['symbol']}={c['value']} {c['unit']}",
     ]
 
-    formula_list = []
+    formula_list = [
+        '$\alpha = \sqrt{2m_e(V-E)}/\hbar$',
+        '$T=\left(1+\frac{V_0^2}{4E(V_0-E)}sinh^2(\alpha a)\right)^{-1}$'
+    ]
 
     if opt == '001':
 
@@ -209,6 +212,58 @@ def question(qpoint, opt, ntest):
                 val = 100/(1+(sinh((kappa*1.e-9)*value_1[i])*value_2[i])**2/(4*value_3[i]*(value_2[i]-value_3[i])))
                 minx_list = [abs(val-item['choice']) for item in alt_list]
                 if min(minx_list) >= 0.001:
+                    alt_list.append({
+                        'choice': val,
+                        'consideration': 'Alternativa errada',
+                        'point': 0.0
+                        })
+
+        indx = random.sample(range(0,10),10)
+
+        alternative_list = [alt_list[u] for u in indx]
+
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+
+    elif opt == '003':
+
+        type = 'objective'
+
+        # generating input values list
+        p1 = (0.1, 0.6, '\\unit{\\nano\metre}') # min, max, unidade
+        p2 = (10, 20, '\\unit{\electronvolt}') # min, max, unidade
+        p3 = (1, 9, '\\unit{\\volt}') # min, max, unidade
+
+        value_1 = random_vars(p1, ntest)
+        value_2 = random_vars(p2, ntest)
+        value_3 = random_vars(p3, ntest)
+
+        i0 = choice([i for i in range(10)])
+
+        text = f"""Em um dispositivo semicondutor, uma camada de óxido forma uma barreira com \\num{{{value_1[i0]}}} {p1[2]} de largura e {{{value_2[i0]}}} {p2[2]} de altura. Elétrons chegam a barreira depois de serem acelerados por uma tensão de {{{value_3[i0]}}} {p3[2]}. Encontre a constante de penetração $\\alpha$ (Dica: veja o formulário abaixo).
+        
+        """
+
+        alt_list = [{
+            'choice': sqrt(2*me_value*(value_2[i0]-value_3[i0]))/h_value,
+            'consideration': 'Alternativa correta',
+            'point': qpoint
+            }]
+
+        alt_list.append({
+            'choice': 0,
+            'consideration': 'Errou em considerar a probabilidade de penetração na região energeticamente proibida',
+            'point': 0.0
+            })
+
+        figure = ''
+
+        unit = '\\unit{\per\\nano\metre}'
+
+        for i in range(ntest):
+            if i not in [i0]:
+                val = sqrt(2*me_value*(value_2[i]-value_3[i]))/h_value
+                minx_list = [abs(val-item['choice']) for item in alt_list]
+                if min(minx_list) >= 0.01:
                     alt_list.append({
                         'choice': val,
                         'consideration': 'Alternativa errada',

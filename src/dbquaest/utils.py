@@ -64,7 +64,7 @@ def string_format(string):
     string = string.replace('\r', 'r').replace('\lambda', 'lambda').replace('\phi','phi')
     string = string.replace('\Delta', 'Delta').replace('\int', 'int').replace('\m', 'm')
     string = string.replace('\Phi', 'Phi').replace('\h', 'h').replace('\pi', 'pi').replace('\o', 'o')
-    string = string.replace('\s', 's').replace('\g', 'g')
+    string = string.replace('\s', 's').replace('\g', 'g').replace('\q', 'q').replace('\l', 'l')
 
     list = string.split(',')
 

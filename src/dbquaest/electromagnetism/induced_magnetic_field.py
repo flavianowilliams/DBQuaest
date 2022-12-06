@@ -328,6 +328,52 @@ def question(qpoint, opt, ntest):
 
         context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
+    elif opt == '004':
+
+        type = 'conceptual'
+
+        text = f"""A figura mostra mostra os vetores velocidade de quatro elétrons nas vizinhanças de um fio percorrido por uma corrente i. As velocidades têm módulos iguais e a velocidade $\\vec{{v}}2$ aponta para dentro do papel. Os elétrons 1 e 2 estão à mesma distância do fio, e o mesmo acontece com os elétrons 3 e 4. Indique qual elétron não sofrerá ação de alguma força magnética atuando nele.
+        
+        \\begin{{minipage}}[c]{{0.5\\linewidth}}
+            \\begin{{center}}
+                \\begin{{tikzpicture}}[scale=0.5,transform shape, font=\Large]
+                    \\tikzstyle{{s1}}=[circle, radius=0.1, ball color=gray!50];
+                    \\tkzInit[xmin=0,xmax=10,ymin=-2,ymax=5]
+                    \\tkzClip[space=0.25]
+                    \\tkzDefPoints{{0/0/O, 3/-1/A}}
+                    \draw[fill=gray!50] (O) rectangle ++(10,0.3);
+                    \draw[->, line width=1.pt] (A) --++ (3,0) node[above, midway] {{i}};
+                    \\tkzDefPoints{{2/3/v1, 4/3/v2, 6/3/v3, 8/3/v4}}
+                    \draw[->, line width=1.pt] (v1) --++ (-2,0) node[above, midway] {{$\\vec{{v}}_1$}};
+                    \draw[s1] (v1) circle [radius=0.3cm] node {{\huge -}};
+                    \draw[->, line width=1.pt] (v2) --++ (0,-2) node[right, midway] {{$\\vec{{v}}_2$}};
+                    \draw[s1] (v2) circle [radius=0.3cm] node {{\huge -}};
+                    \draw[->, line width=1.pt] (v3) --++ (0,2) node[right, midway] {{$\\vec{{v}}_3$}};
+                    \draw[s1] (v3) circle [radius=0.3cm] node {{\huge -}};
+                    \draw[->, line width=1.pt] (v4) --++ (0,0) node[above=0.5] {{$\\vec{{v}}_4$}};
+                    \draw[s1] (v4) circle [radius=0.3cm] node {{\huge $\\times$}};
+                \end{{tikzpicture}}
+            \end{{center}}
+        \end{{minipage}}
+        
+        """
+
+        alt_list = [{'choice': '4.','consideration': 'Alternativa correta','point': qpoint}]
+        alt_list.append({'choice': '1.','consideration': 'A força magnética atuando no elétron será diferente de zero, pois a sua direção de propagação é perpendicular à direção do campo magnético induzido pela corrente i.','point': 0.0})
+        alt_list.append({'choice': '2.','consideration': 'A força magnética atuando no elétron será diferente de zero, pois a sua direção de propagação é perpendicular à direção do campo magnético induzido pela corrente i.','point': 0.0})
+        alt_list.append({'choice': '3.','consideration': 'A força magnética atuando no elétron será diferente de zero, pois a sua direção de propagação é perpendicular à direção do campo magnético induzido pela corrente i.','point': 0.0})
+        alt_list.append({'choice': 'Todos sofrerão a ação de uma força magnética causada pelo fio.','consideration': 'O elétron número quatro não sofrerá ação de alguma força magnética, pois ele está se propagando na mesma direção do campo magnético induzido pela corrente i.','point': 0.0})
+
+        figure = ''
+
+        unit = ''
+
+        indx = random.sample(range(0,5),5)
+
+        alternative_list = [alt_list[u] for u in indx]
+
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+
     else:
 
         context = {}

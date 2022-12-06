@@ -247,6 +247,129 @@ def question(qpoint, opt, ntest):
 
         context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
 
+    elif opt == '003':
+
+        type = 'objective'
+
+        # generating input values list
+        p1 = (1e-1, 4e-1, '\\unit[per-mode = symbol]{\weber}') # min, max, unidade
+        p2 = (5e-1, 1.0, '\\unit[per-mode = symbol]{\weber}') # min, max, unidade
+        p3 = (0.01, 0.1, '\\unit[per-mode = symbol]{\second}') # min, max, unidade
+
+        value_1 = random_vars(p1, ntest)
+        value_2 = random_vars(p2, ntest)
+        value_3 = random_vars(p3, ntest)
+
+        i0 = choice([i for i in range(10)])
+
+        text = f"""Suponha que um ímãn a uma certa distância de uma espira esteja estabelecendo através dela um fluxo de \\num{{{value_1[i0]}}} {p1[2]}. Aproximando rapidamente o ímãn da espira, o fluxo passa a valer \\num{{{value_2[i0]}}} {p2[2]}. Se essa variação ocorreu num intervalo de \\num{{{value_3[i0]}}} {p3[2]}, qual é a intensidade da f.e.m. induzida nessa espira?"""
+
+        alt_list = [{
+            'choice': (value_2[i0]-value_1[i0])/value_3[i0],
+            'consideration': 'Alternativa correta.',
+            'point': qpoint
+            }]
+
+        alt_list.append({
+            'choice': (value_2[i0]-value_1[i0]),
+            'consideration': 'Errou em definir a taxa de variação do fluxo magnético.',
+            'point': 0.0
+            })
+
+        alt_list.append({
+            'choice': (value_2[i0])/value_3[i0],
+            'consideration': 'Errou em definir a taxa de variação do fluxo magnético.',
+            'point': 0.0
+            })
+
+        alt_list.append({
+            'choice': (value_1[i0])/value_3[i0],
+            'consideration': 'Errou em definir a taxa de variação do fluxo magnético.',
+            'point': 0.0
+            })
+
+        alt_list.append({
+            'choice': (value_2[i0]+value_1[i0])/value_3[i0],
+            'consideration': 'Errou em definir a taxa de variação do fluxo magnético.',
+            'point': 0.0
+            })
+
+        alt_list.append({
+            'choice': (value_2[i0]+value_1[i0]),
+            'consideration': 'Errou em definir a taxa de variação do fluxo magnético.',
+            'point': 0.0
+            })
+
+        figure = ''
+
+        unit = '\\unit{\\volt}'
+
+        for i in range(ntest):
+            if i not in [i0]:
+                val = (value_2[i]-value_1[i])/value_3[i]
+                minx_list = [abs(val-item['choice']) for item in alt_list]
+                if min(minx_list) >= 0.01:
+                    alt_list.append({
+                        'choice': val,
+                        'consideration': 'Alternativa errada',
+                        'point': 0.0
+                        })
+
+        indx = random.sample(range(0,10),10)
+
+        alternative_list = [alt_list[u] for u in indx]
+
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+
+    elif opt == '004':
+
+        type = 'conceptual'
+
+        text = f"""O gráfico mostra o módulo B(t) de um campo magnético uniforme que atravessa uma bobina condutora, com a direção do campo perpendicular ao plano da bobina. Marque a alternativa que melhor representa a f.e.m. e a corrente induzida nessa bobina.
+        
+        \\begin{{minipage}}[c]{{0.5\\linewidth}}
+            \\begin{{center}}
+                \\begin{{tikzpicture}}[scale=0.5,transform shape, font=\Large]
+                    \\tkzInit[xmin=0,xmax=10,ymin=0,ymax=5]
+                    \\tkzClip[space=1.75]
+                    \\tkzDrawX[right,label={{t(s)}}]
+                    \\tkzDrawY[above,label={{B(T)}}]
+                    \\tkzFct[domain=0:3, color=red, line width=1.5pt]{{4*x/3}}
+                    \\tkzDefPointByFct[ref=A](3)
+                    \\tkzPointShowCoord(A)
+                    \\tkzFct[domain=3:5, color=red, line width=1.5pt]{{4}}
+                    \\tkzDefPointByFct[ref=B](5)
+                    \\tkzPointShowCoord(B)
+                    \\tkzFct[domain=5:10, color=red, line width=1.5pt]{{8-x*4/5}}
+                    \\tkzDefPointByFct[ref=C](5)
+                    \\tkzPointShowCoord(C)
+                    \\tkzDefPoints{{3/0/D,5/0/E,0/4/F,10/0/G}}
+                    \\tkzText[below, color=black](D){{3,0}}
+                    \\tkzText[below, color=black](E){{5,0}}
+                    \\tkzText[below, color=black](G){{10,0}}
+                    \\tkzText[left, color=black](F){{$B_{{\\text{{máx}}}}$}}
+                \end{{tikzpicture}}
+            \end{{center}}
+        \end{{minipage}}
+        
+        """
+
+        alt_list = [{'choice': 'Todas as afirmações estão corretas.','consideration': 'Alternativa correta','point': qpoint}]
+        alt_list.append({'choice': 'Entre 0 a 3 segundos a f.e.m. induzida terá sentido oposto à f.e.m. produzida entre os instantes 5 a 10 segundos.','consideration': 'Esta afirmação está correta.','point': 0.25*qpoint})
+        alt_list.append({'choice': 'A máxima f.e.m. que irá aparecer na bobina ocorrerá entre os instantes 0 a 3 segundos.','consideration': 'Esta afirmação está correta.','point': 0.25*qpoint})
+        alt_list.append({'choice': 'Entre os instantes 3 a 5 segundos não aparecerá alguma f.e.m. na bobina.','consideration': 'Esta afirmação está correta.','point': 0.25*qpoint})
+        alt_list.append({'choice': 'A máxima corrente que irá aparecer na bobina ocorrerá entre os instantes 0 a 3 segundos.','consideration': 'Esta afirmação está correta.','point': 0.25*qpoint})
+
+        figure = ''
+
+        unit = ''
+
+        indx = random.sample(range(0,5),5)
+
+        alternative_list = [alt_list[u] for u in indx]
+
+        context = {'constants': cte_list, 'formulas': formula_list, 'type': type, 'text': text, 'figure': figure, 'unit': unit, 'alternative': alternative_list}
+
     else:
 
         context = {}
